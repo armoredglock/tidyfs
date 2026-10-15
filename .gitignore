@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Production Builds
+dist/
+dist-electron/
+release/
+
+# Temporary & Test Artefacts
+mock_messy_folder/
+*.log
+
+# OS Metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment Variables
+.env
+.env.local
