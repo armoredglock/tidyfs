@@ -3,6 +3,7 @@ import path from 'path';
 import { ScannedFile, TidySettings } from './types.js';
 import { classifyFile } from './classifier.js';
 import { calculateDecay } from './decay.js';
+import { analyzeThreat } from './threatScanner.js';
 
 export function scanFolder(folderPath: string, settings: TidySettings): ScannedFile[] {
   if (!fs.existsSync(folderPath)) {
@@ -32,6 +33,11 @@ export function scanFolder(folderPath: string, settings: TidySettings): ScannedF
       const stats = fs.statSync(filePath);
       const fileAgeMs = now - Math.min(stats.birthtimeMs || stats.mtimeMs, stats.mtimeMs);
 
+      // Threat Analysis (Double extension spoofing, RTLO, dangerous scripts)
+      const threat = settings.enableSecurityScanner !== false 
+        ? analyzeThreat(fileName, stats.size) || undefined 
+        : undefined;
+
       const { category, isInstallerOrArchive } = classifyFile(filePath);
       const { decayState, daysUntilDecay } = calculateDecay(fileAgeMs, isInstallerOrArchive, settings);
       const isHeavy = stats.size >= heavyThresholdBytes;
@@ -47,7 +53,8 @@ export function scanFolder(folderPath: string, settings: TidySettings): ScannedF
         decayState,
         daysUntilDecay,
         isInstallerOrArchive,
-        isHeavy
+        isHeavy,
+        threat
       });
     } catch {
       // File could be locked or transient

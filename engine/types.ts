@@ -21,6 +21,15 @@ export type OrganizationStrategy =
 
 export type PrivacyMode = 'strict-metadata' | 'local-hash';
 
+export type ThreatLevel = 'safe' | 'suspicious' | 'critical';
+
+export interface ThreatInfo {
+  level: ThreatLevel;
+  type: 'double_extension' | 'rtlo_obfuscation' | 'suspicious_script' | 'space_padding' | 'known_threat_ext';
+  reason: string;
+  recommendation: string;
+}
+
 export interface CustomRule {
   id: string;
   name: string;
@@ -47,17 +56,19 @@ export interface ScannedFile {
   ignored?: boolean;
   hash?: string;
   duplicateOf?: string; // original path if duplicate
+  threat?: ThreatInfo;  // Virus / malware heuristic threat
 }
 
 export interface TidyAction {
   id: string;
-  type: 'move' | 'trash' | 'delete_duplicate';
+  type: 'move' | 'trash' | 'delete_duplicate' | 'quarantine';
   sourcePath: string;
   targetPath: string;
   fileName: string;
   fileSize: number;
   reason: string;
   category: Category;
+  threat?: ThreatInfo;
 }
 
 export interface TidyPlan {
@@ -75,13 +86,15 @@ export interface TidyPlan {
     duplicateBytes: number;
     heavyCount: number;
     heavyBytes: number;
+    threatCount: number;
+    threatBytes: number;
   };
 }
 
 export interface JournalAction {
   sourcePath: string;
   currentPath: string;
-  type: 'move' | 'trash';
+  type: 'move' | 'trash' | 'quarantine';
 }
 
 export interface JournalEntry {
@@ -95,6 +108,8 @@ export interface JournalEntry {
 export interface TidySettings {
   // Security & Privacy
   privacyMode: PrivacyMode; // 'strict-metadata' (0 file content reads) vs 'local-hash'
+  enableSecurityScanner: boolean; // Heuristic threat detection (double extensions, RTLO, dangerous scripts)
+  quarantineFolderName: string;   // 'TidyFS-Quarantine'
 
   // Organization Strategy
   organizationStrategy: OrganizationStrategy;
@@ -154,6 +169,8 @@ export const DEFAULT_CUSTOM_RULES: CustomRule[] = [
 
 export const DEFAULT_SETTINGS: TidySettings = {
   privacyMode: 'strict-metadata',
+  enableSecurityScanner: true,
+  quarantineFolderName: 'TidyFS-Quarantine',
   organizationStrategy: 'category',
   dateSubfolders: false,
   customRules: DEFAULT_CUSTOM_RULES,

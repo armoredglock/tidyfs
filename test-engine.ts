@@ -42,20 +42,28 @@ async function runTest() {
   fs.writeFileSync(path.join(testDir, 'presentation.pptx'), 'Identical presentation content here');
   fs.writeFileSync(path.join(testDir, 'presentation (1).pptx'), 'Identical presentation content here');
 
-  console.log('[TEST] Created 9 test files across multiple domains.');
+  // 9. Malware Threat: Double extension spoofing attack (.pdf.exe)
+  fs.writeFileSync(path.join(testDir, 'Urgent_Invoice_Receipt.pdf.exe'), 'Simulated Trojan binary payload');
 
-  // Test 1: Scan with strict metadata privacy mode
-  console.log('\n--- Step 1: Scanning Folder (Privacy Mode: strict-metadata) ---');
+  // 10. Malware Threat: Dangerous script format (.vbs)
+  fs.writeFileSync(path.join(testDir, 'system_patch.vbs'), 'WScript.Echo "Suspicious script payload"');
+
+  console.log('[TEST] Created 11 test files across multiple domains including simulated threat vectors.');
+
+  // Test 1: Scan with strict metadata privacy mode & threat scanner
+  console.log('\n--- Step 1: Scanning Folder (Privacy: strict-metadata, Threat Scanner: ACTIVE) ---');
   const files = scanFolder(testDir, DEFAULT_SETTINGS);
   console.log(`Scanned ${files.length} files:`);
   for (const f of files) {
-    console.log(`  - [${f.category}] ${f.name} (decay: ${f.decayState}, days: ${f.daysUntilDecay})`);
+    const threatTag = f.threat ? ` [THREAT: ${f.threat.level.toUpperCase()} - ${f.threat.type}]` : '';
+    console.log(`  - [${f.category}] ${f.name} (decay: ${f.decayState})${threatTag}`);
   }
 
-  // Test 2: Semantic Category Strategy
-  console.log('\n--- Step 2: Generating Plan (Semantic Category Strategy) ---');
+  // Test 2: Semantic Category Strategy with Threat Quarantine
+  console.log('\n--- Step 2: Generating Plan (Semantic Category + Quarantine Priority) ---');
   const planCategory = await createTidyPlan(testDir, DEFAULT_SETTINGS);
   console.log(`Generated ${planCategory.actions.length} actions:`);
+  console.log(`Threat summary: ${planCategory.summary.threatCount} threats quarantined.`);
   for (const a of planCategory.actions) {
     console.log(`  - ${a.type.toUpperCase()}: ${a.fileName} -> ${path.basename(path.dirname(a.targetPath))}/${path.basename(a.targetPath)} (${a.reason})`);
   }

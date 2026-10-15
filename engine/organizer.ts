@@ -65,7 +65,7 @@ function resolveStrategyPath(
     }
 
     case 'custom-rules':
-      // If user strictly selected custom rules and none matched, route to Misc/
+      // If user strictly selected custom rules and none matched, route to Unmatched
       return {
         relativeFolder: 'Unmatched_Rules',
         reason: 'Unmatched by custom rules'
@@ -129,6 +129,8 @@ export async function createTidyPlan(targetFolder: string, settings: TidySetting
   let duplicateBytes = 0;
   let heavyCount = 0;
   let heavyBytes = 0;
+  let threatCount = 0;
+  let threatBytes = 0;
 
   for (const file of files) {
     categoryCounts[file.category]++;
@@ -137,6 +139,28 @@ export async function createTidyPlan(targetFolder: string, settings: TidySetting
     if (file.isHeavy) {
       heavyCount++;
       heavyBytes += file.size;
+    }
+
+    // 0. PRIORITY 0: Threat quarantine (Virus / deception heuristics)
+    if (file.threat && settings.enableSecurityScanner !== false) {
+      threatCount++;
+      threatBytes += file.size;
+
+      const quarantineFolder = path.join(targetFolder, settings.quarantineFolderName || 'TidyFS-Quarantine');
+      const targetPath = getUniqueDestination(quarantineFolder, file.name);
+
+      actions.push({
+        id: Math.random().toString(36).substring(2, 9),
+        type: 'quarantine',
+        sourcePath: file.path,
+        targetPath,
+        fileName: file.name,
+        fileSize: file.size,
+        reason: `[SECURITY QUARANTINE] ${file.threat.reason}`,
+        category: file.category,
+        threat: file.threat
+      });
+      continue;
     }
 
     // 1. Is it a duplicate?
@@ -220,7 +244,9 @@ export async function createTidyPlan(targetFolder: string, settings: TidySetting
       duplicateCount,
       duplicateBytes,
       heavyCount,
-      heavyBytes
+      heavyBytes,
+      threatCount,
+      threatBytes
     }
   };
 }
@@ -238,7 +264,7 @@ export function executeTidyPlan(
   }
 
   const errors: string[] = [];
-  const journalActions: { sourcePath: string; currentPath: string; type: 'move' | 'trash' }[] = [];
+  const journalActions: { sourcePath: string; currentPath: string; type: 'move' | 'trash' | 'quarantine' }[] = [];
   let movedCount = 0;
 
   for (const action of plan.actions) {
@@ -259,7 +285,7 @@ export function executeTidyPlan(
       journalActions.push({
         sourcePath: action.sourcePath,
         currentPath: safeTarget,
-        type: action.type === 'trash' ? 'trash' : 'move'
+        type: action.type === 'trash' ? 'trash' : action.type === 'quarantine' ? 'quarantine' : 'move'
       });
     } catch (err: unknown) {
       errors.push(`Error moving ${action.fileName}: ${(err as Error).message}`);

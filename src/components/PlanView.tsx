@@ -200,6 +200,28 @@ export const PlanView: React.FC<PlanViewProps> = ({
         </div>
       </div>
 
+      {/* High-Priority Threat Alert Banner */}
+      {plan?.summary?.threatCount && plan.summary.threatCount > 0 ? (
+        <div className="card-brute p-3.5 border-2 border-rose-600 bg-rose-50/50 dark:bg-rose-950/40 rounded flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="h-7 w-7 rounded bg-rose-600 text-white flex items-center justify-center shrink-0">
+              <Ban className="h-4 w-4" />
+            </div>
+            <div>
+              <span className="font-mono font-black text-xs text-rose-800 dark:text-rose-300 uppercase tracking-wider block">
+                SECURITY ALERT // {plan.summary.threatCount} SUSPICIOUS / MALWARE DECEPTION THREAT(S) DETECTED
+              </span>
+              <p className="text-[11px] font-semibold text-rose-700 dark:text-rose-400">
+                Double extensions, Right-to-Left character spoofing, or dangerous script wrappers staged for quarantine.
+              </p>
+            </div>
+          </div>
+          <span className="px-2 py-1 rounded bg-rose-600 text-white font-mono font-extrabold text-[10px] tracking-wider uppercase shrink-0">
+            AUTO-ISOLATED TO QUARANTINE
+          </span>
+        </div>
+      ) : null}
+
       {/* Functional Filter & Search Bar */}
       <div className="card-brute p-3 flex flex-col md:flex-row items-center justify-between gap-3 transition-colors">
         {/* Live Search Input */}
@@ -362,8 +384,16 @@ export const PlanView: React.FC<PlanViewProps> = ({
                     </td>
                     <td className="p-2.5">
                       <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-200 font-bold">
-                        <span className="text-[9px] font-black px-1 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase">
-                          {action.type === 'trash' ? 'RECYCLE' : action.type === 'delete_duplicate' ? 'DEDUP' : 'MOVE'}
+                        <span className={`text-[9px] font-black px-1.5 py-0.2 rounded uppercase ${
+                          action.type === 'quarantine'
+                            ? 'bg-rose-600 text-white border border-rose-700'
+                            : action.type === 'trash'
+                            ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800'
+                            : action.type === 'delete_duplicate'
+                            ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800'
+                            : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        }`}>
+                          {action.type === 'quarantine' ? 'QUARANTINE' : action.type === 'trash' ? 'RECYCLE' : action.type === 'delete_duplicate' ? 'DEDUP' : 'MOVE'}
                         </span>
                         <ArrowRight className="h-3 w-3 text-slate-400 shrink-0" />
                         <span className="text-emerald-700 dark:text-emerald-400 truncate max-w-xs text-xs font-bold" title={action.targetPath}>

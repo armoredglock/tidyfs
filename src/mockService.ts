@@ -199,7 +199,9 @@ export const MOCK_PLAN: TidyPlan = {
     duplicateCount: 1,
     duplicateBytes: 18400000,
     heavyCount: 2,
-    heavyBytes: 657000000
+    heavyBytes: 657000000,
+    threatCount: 0,
+    threatBytes: 0
   }
 };
 
