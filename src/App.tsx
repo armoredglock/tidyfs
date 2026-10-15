@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   HardDrive
 } from 'lucide-react';
-import { ScannedFile, TidyPlan, TidySettings, JournalEntry, DEFAULT_SETTINGS, TidyAction, Category } from './types.js';
+import { ScannedFile, TidyPlan, TidySettings, JournalEntry, DEFAULT_SETTINGS, TidyAction, Category, OrganizationStrategy } from './types.js';
 import { Header } from './components/Header.js';
 import { StatsCards } from './components/StatsCards.js';
 import { StorageBar } from './components/StorageBar.js';
@@ -271,6 +271,16 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleStrategyChange = async (strategy: OrganizationStrategy) => {
+    const updatedSettings = { ...settings, organizationStrategy: strategy };
+    setSettings(updatedSettings);
+    if (window.tidyFS) {
+      await window.tidyFS.saveSettings(updatedSettings);
+    }
+    showToast(`Segregation strategy: ${strategy.replace(/-/g, ' ').toUpperCase()}`, 'info');
+    runScan(currentFolder, updatedSettings);
+  };
+
   const handleQuickCleanDecay = () => {
     const decayActions = plan?.actions.filter(a => a.reason.toLowerCase().includes('decay') || a.reason.toLowerCase().includes('installer') || a.category === 'Installers') || [];
     if (decayActions.length > 0) {
@@ -448,6 +458,9 @@ export const App: React.FC = () => {
               isExecuting={isExecuting}
               onRevealFile={handleRevealFile}
               filterCategory={activeCategory}
+              currentStrategy={settings.organizationStrategy}
+              onChangeStrategy={handleStrategyChange}
+              onOpenSettings={() => setIsSettingsOpen(true)}
             />
           )}
 

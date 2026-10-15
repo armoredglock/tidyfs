@@ -1,12 +1,34 @@
 export type Category = 
   | 'Finances' 
   | 'Travel' 
+  | 'Legal'
+  | 'Academic'
   | 'Media' 
+  | 'Design'
   | 'Documents' 
   | 'Code' 
   | 'Archives' 
   | 'Installers' 
   | 'Other';
+
+export type OrganizationStrategy = 
+  | 'category'         // Group by semantic topic & extension
+  | 'date-year-month'  // Group by timeline (e.g. 2026/10 - October)
+  | 'date-year'        // Group by year (e.g. 2026/)
+  | 'extension'        // Group by file extension (e.g. PDF/, PNG/, ZIP/)
+  | 'size-tier'        // Group by size (Heavy >100MB, Medium 10-100MB, Small <10MB)
+  | 'custom-rules';    // Group strictly by user-defined custom routing rules
+
+export type PrivacyMode = 'strict-metadata' | 'local-hash';
+
+export interface CustomRule {
+  id: string;
+  name: string;
+  enabled: boolean;
+  matchType: 'extension' | 'keyword' | 'regex' | 'min_size_mb';
+  pattern: string; // e.g. ".psd, .ai", "tax, 1099, invoice", "meeting_.*"
+  targetFolder: string; // e.g. "Work/Taxes", "Design/SourceFiles", "Meetings"
+}
 
 export type DecayState = 'active' | 'expiring' | 'expired' | 'exempt';
 
@@ -71,6 +93,17 @@ export interface JournalEntry {
 }
 
 export interface TidySettings {
+  // Security & Privacy
+  privacyMode: PrivacyMode; // 'strict-metadata' (0 file content reads) vs 'local-hash'
+
+  // Organization Strategy
+  organizationStrategy: OrganizationStrategy;
+  dateSubfolders: boolean; // e.g. Documents/2026/
+
+  // Custom User Routing Rules
+  customRules: CustomRule[];
+
+  // Decay & Deduplication
   decayDays: number;
   expiringThresholdDays: number;
   enableDecay: boolean;
@@ -84,7 +117,46 @@ export interface TidySettings {
   decayFolderName: string;
 }
 
+export const DEFAULT_CUSTOM_RULES: CustomRule[] = [
+  {
+    id: 'rule-tax',
+    name: 'Tax, Receipts & Invoices',
+    enabled: true,
+    matchType: 'keyword',
+    pattern: 'invoice, receipt, tax, 1099, w2, payslip, gst, vat',
+    targetFolder: 'Finances/Invoices_and_Tax'
+  },
+  {
+    id: 'rule-contracts',
+    name: 'Contracts & Agreements',
+    enabled: true,
+    matchType: 'keyword',
+    pattern: 'contract, agreement, nda, terms, policy, lease',
+    targetFolder: 'Legal/Agreements'
+  },
+  {
+    id: 'rule-raw-design',
+    name: 'Raw Design Assets',
+    enabled: true,
+    matchType: 'extension',
+    pattern: '.psd, .ai, .sketch, .fig, .blend, .obj',
+    targetFolder: 'Design/SourceFiles'
+  },
+  {
+    id: 'rule-screenshots',
+    name: 'Screen Captures',
+    enabled: true,
+    matchType: 'keyword',
+    pattern: 'screenshot, screen shot, capture, snip',
+    targetFolder: 'Media/Screenshots'
+  }
+];
+
 export const DEFAULT_SETTINGS: TidySettings = {
+  privacyMode: 'strict-metadata',
+  organizationStrategy: 'category',
+  dateSubfolders: false,
+  customRules: DEFAULT_CUSTOM_RULES,
   decayDays: 14,
   expiringThresholdDays: 3,
   enableDecay: true,
@@ -97,7 +169,10 @@ export const DEFAULT_SETTINGS: TidySettings = {
   categoryFolders: {
     Finances: 'Finances',
     Travel: 'Travel',
+    Legal: 'Legal',
+    Academic: 'Academic',
     Media: 'Media',
+    Design: 'Design',
     Documents: 'Documents',
     Code: 'Projects',
     Archives: 'Archives',

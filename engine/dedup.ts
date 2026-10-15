@@ -1,8 +1,12 @@
 import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
-import { ScannedFile } from './types.js';
+import { ScannedFile, TidySettings } from './types.js';
 
+/**
+ * Computes SHA-256 hash strictly on-device without any network exposure.
+ * Only executed when privacyMode is explicitly set to 'local-hash'.
+ */
 export async function computeFileHash(filePath: string, sampleBytes = 1024 * 1024 * 5): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
@@ -23,7 +27,7 @@ export async function computeFileHash(filePath: string, sampleBytes = 1024 * 102
         stream.on('end', () => resolve(hash.digest('hex')));
         stream.on('error', (err: Error) => reject(err));
       } else {
-        // Read start and end slices for ultra fast verification of large files
+        // Read start and end slices for verification of large files
         const fd = fs.openSync(filePath, 'r');
         const buffer = Buffer.alloc(1024 * 64);
         
@@ -45,9 +49,17 @@ export async function computeFileHash(filePath: string, sampleBytes = 1024 * 102
   });
 }
 
-export async function detectDuplicates(files: ScannedFile[]): Promise<Map<string, string>> {
+/**
+ * Detects duplicates with strict respect to user's privacy settings.
+ * In 'strict-metadata' mode, files are NEVER opened or read.
+ */
+export async function detectDuplicates(
+  files: ScannedFile[],
+  settings?: TidySettings
+): Promise<Map<string, string>> {
   // Map of filePath -> originalFilePath that it is a duplicate of
   const duplicateMap = new Map<string, string>();
+  const isStrictMetadata = !settings || settings.privacyMode === 'strict-metadata';
 
   // 1. Group by exact file size
   const sizeMap = new Map<number, ScannedFile[]>();
@@ -58,33 +70,67 @@ export async function detectDuplicates(files: ScannedFile[]): Promise<Map<string
     sizeMap.set(file.size, group);
   }
 
-  // 2. Hash files with matching sizes
+  // 2. Size-matching analysis
   for (const group of sizeMap.values()) {
     if (group.length < 2) continue;
 
-    const hashMap = new Map<string, ScannedFile>();
-    for (const file of group) {
-      try {
-        const hash = await computeFileHash(file.path);
-        file.hash = hash;
+    if (isStrictMetadata) {
+      // In STRICT METADATA MODE: Zero file opens.
+      // Match by exact byte size AND name copy patterns or clean name collision
+      for (let i = 0; i < group.length; i++) {
+        for (let j = i + 1; j < group.length; j++) {
+          const f1 = group[i];
+          const f2 = group[j];
+          if (duplicateMap.has(f1.path) && duplicateMap.has(f2.path)) continue;
 
-        if (hashMap.has(hash)) {
-          const original = hashMap.get(hash)!;
-          // Determine which is original: shorter name or earlier created
-          const isOriginalBetter = original.createdAt <= file.createdAt || !hasDuplicateSuffix(original.name);
-          if (isOriginalBetter) {
-            duplicateMap.set(file.path, original.path);
-            file.duplicateOf = original.path;
+          const isF1Copy = hasDuplicateSuffix(f1.name);
+          const isF2Copy = hasDuplicateSuffix(f2.name);
+          const clean1 = cleanDuplicateSuffix(f1.name).toLowerCase();
+          const clean2 = cleanDuplicateSuffix(f2.name).toLowerCase();
+
+          if (clean1 === clean2) {
+            // One is a named duplicate copy of the other
+            if (isF2Copy && !isF1Copy) {
+              duplicateMap.set(f2.path, f1.path);
+              f2.duplicateOf = f1.path;
+            } else if (isF1Copy && !isF2Copy) {
+              duplicateMap.set(f1.path, f2.path);
+              f1.duplicateOf = f2.path;
+            } else {
+              // Both or neither have suffix, prefer older creation time as original
+              const original = f1.createdAt <= f2.createdAt ? f1 : f2;
+              const duplicate = original === f1 ? f2 : f1;
+              duplicateMap.set(duplicate.path, original.path);
+              duplicate.duplicateOf = original.path;
+            }
+          }
+        }
+      }
+    } else {
+      // In LOCAL-HASH MODE: Compute SHA-256 in memory
+      const hashMap = new Map<string, ScannedFile>();
+      for (const file of group) {
+        try {
+          const hash = await computeFileHash(file.path);
+          file.hash = hash;
+
+          if (hashMap.has(hash)) {
+            const original = hashMap.get(hash)!;
+            const isOriginalBetter = original.createdAt <= file.createdAt || !hasDuplicateSuffix(original.name);
+            if (isOriginalBetter) {
+              duplicateMap.set(file.path, original.path);
+              file.duplicateOf = original.path;
+            } else {
+              duplicateMap.set(original.path, file.path);
+              original.duplicateOf = file.path;
+              hashMap.set(hash, file);
+            }
           } else {
-            duplicateMap.set(original.path, file.path);
-            original.duplicateOf = file.path;
             hashMap.set(hash, file);
           }
-        } else {
-          hashMap.set(hash, file);
+        } catch {
+          // Ignore file read error if locked
         }
-      } catch {
-        // Ignore file read error if locked
       }
     }
   }
@@ -108,12 +154,12 @@ export async function detectDuplicates(files: ScannedFile[]): Promise<Map<string
 }
 
 function hasDuplicateSuffix(fileName: string): boolean {
-  return / \(\d+\)\.[^.]+$/.test(fileName) || / - Copy\.[^.]+$/.test(fileName);
+  return / \(\d+\)\.[^.]+$/.test(fileName) || / - Copy\.[^.]+$/.test(fileName) || /_\(\d+\)\.[^.]+$/.test(fileName);
 }
 
 function cleanDuplicateSuffix(fileName: string): string {
   const ext = path.extname(fileName);
   const nameWithoutExt = fileName.slice(0, fileName.length - ext.length);
-  const cleaned = nameWithoutExt.replace(/ \(\d+\)$/, '').replace(/ - Copy$/, '');
+  const cleaned = nameWithoutExt.replace(/ \(\d+\)$/, '').replace(/ - Copy$/, '').replace(/_\(\d+\)$/, '');
   return cleaned + ext;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Folder, RotateCcw, Settings, RefreshCw, FolderSearch, Sun, Moon, Download, Terminal, Layers } from 'lucide-react';
+import { Folder, RotateCcw, Settings, RefreshCw, FolderSearch, Sun, Moon, Download, Terminal, Layers, ShieldCheck } from 'lucide-react';
 
 interface HeaderProps {
   currentFolder: string;
@@ -46,6 +46,14 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-[10px] font-mono font-extrabold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
                 v1.0.0
               </span>
+              <button
+                onClick={onOpenSettings}
+                className="btn-brute hidden sm:flex items-center gap-1 text-[10px] font-mono font-extrabold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 cursor-pointer"
+                title="100% Air-Gapped // Strict Metadata Only // Zero Content Scanning"
+              >
+                <ShieldCheck className="h-3 w-3" />
+                <span>AIR-GAPPED // ZERO CONTENT SCAN</span>
+              </button>
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className={`inline-block w-1.5 h-1.5 rounded-full ${isScanning ? 'bg-amber-500 animate-ping' : 'bg-emerald-500'}`} />

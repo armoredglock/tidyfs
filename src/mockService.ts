@@ -171,7 +171,10 @@ export const MOCK_PLAN: TidyPlan = {
     categoryCounts: {
       Finances: 1,
       Travel: 1,
+      Legal: 0,
+      Academic: 0,
       Media: 1,
+      Design: 0,
       Documents: 2,
       Code: 0,
       Archives: 1,
@@ -181,7 +184,10 @@ export const MOCK_PLAN: TidyPlan = {
     categoryBytes: {
       Finances: 2450000,
       Travel: 1120000,
+      Legal: 0,
+      Academic: 0,
       Media: 8900000,
+      Design: 0,
       Documents: 36800000,
       Code: 0,
       Archives: 45000000,

@@ -1,19 +1,107 @@
 import fs from 'fs';
 import path from 'path';
-import { ScannedFile, TidyAction, TidyPlan, TidySettings, Category } from './types.js';
+import { ScannedFile, TidyAction, TidyPlan, TidySettings, Category, OrganizationStrategy } from './types.js';
 import { scanFolder } from './scanner.js';
 import { detectDuplicates } from './dedup.js';
+import { evaluateCustomRules, getCompoundExtension } from './classifier.js';
 import { JournalManager } from './journal.js';
+
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+/**
+ * Resolves the target relative path based on the user's chosen organization strategy
+ */
+function resolveStrategyPath(
+  file: ScannedFile,
+  settings: TidySettings
+): { relativeFolder: string; reason: string } {
+  // 1. Check custom user rules first (Highest priority override)
+  if (settings.customRules && settings.customRules.length > 0) {
+    const customMatch = evaluateCustomRules(file.name, file.size, settings.customRules);
+    if (customMatch && customMatch.matched) {
+      return {
+        relativeFolder: customMatch.targetFolder,
+        reason: customMatch.reason
+      };
+    }
+  }
+
+  const d = new Date(file.modifiedAt || file.createdAt);
+  const year = d.getFullYear().toString();
+  const monthNum = String(d.getMonth() + 1).padStart(2, '0');
+  const monthName = MONTH_NAMES[d.getMonth()] || 'Unknown';
+
+  switch (settings.organizationStrategy) {
+    case 'date-year-month':
+      return {
+        relativeFolder: path.join(year, `${monthNum} - ${monthName}`),
+        reason: `Timeline segregation (${year}/${monthName})`
+      };
+
+    case 'date-year':
+      return {
+        relativeFolder: year,
+        reason: `Yearly segregation (${year})`
+      };
+
+    case 'extension': {
+      const ext = getCompoundExtension(file.name).replace('.', '').toUpperCase() || 'NO_EXT';
+      return {
+        relativeFolder: ext,
+        reason: `File format segregation (${ext})`
+      };
+    }
+
+    case 'size-tier': {
+      if (file.size >= 100 * 1024 * 1024) {
+        return { relativeFolder: 'Heavy (>100MB)', reason: 'Size tier segregation (Heavy files)' };
+      } else if (file.size >= 10 * 1024 * 1024) {
+        return { relativeFolder: 'Medium (10MB-100MB)', reason: 'Size tier segregation (Medium files)' };
+      }
+      return { relativeFolder: 'Standard (<10MB)', reason: 'Size tier segregation (Standard files)' };
+    }
+
+    case 'custom-rules':
+      // If user strictly selected custom rules and none matched, route to Misc/
+      return {
+        relativeFolder: 'Unmatched_Rules',
+        reason: 'Unmatched by custom rules'
+      };
+
+    case 'category':
+    default: {
+      const baseCategoryFolder = settings.categoryFolders[file.category] || file.category;
+      if (settings.dateSubfolders) {
+        return {
+          relativeFolder: path.join(baseCategoryFolder, year),
+          reason: `Organized into ${baseCategoryFolder} (${year}) by semantic rule`
+        };
+      }
+      return {
+        relativeFolder: baseCategoryFolder,
+        reason: `Organized into ${baseCategoryFolder} by semantic rule`
+      };
+    }
+  }
+}
 
 export async function createTidyPlan(targetFolder: string, settings: TidySettings): Promise<TidyPlan> {
   const files = scanFolder(targetFolder, settings);
-  const duplicates = settings.enableDeduplicate ? await detectDuplicates(files) : new Map<string, string>();
+  const duplicates = settings.enableDeduplicate 
+    ? await detectDuplicates(files, settings) 
+    : new Map<string, string>();
 
   const actions: TidyAction[] = [];
   const categoryCounts: Record<Category, number> = {
     Finances: 0,
     Travel: 0,
+    Legal: 0,
+    Academic: 0,
     Media: 0,
+    Design: 0,
     Documents: 0,
     Code: 0,
     Archives: 0,
@@ -24,7 +112,10 @@ export async function createTidyPlan(targetFolder: string, settings: TidySetting
   const categoryBytes: Record<Category, number> = {
     Finances: 0,
     Travel: 0,
+    Legal: 0,
+    Academic: 0,
     Media: 0,
+    Design: 0,
     Documents: 0,
     Code: 0,
     Archives: 0,
@@ -91,14 +182,14 @@ export async function createTidyPlan(targetFolder: string, settings: TidySetting
       continue;
     }
 
-    // 3. Categorize into designated subfolder
-    if (settings.enableCategorize && file.category !== 'Other') {
-      const subFolderName = settings.categoryFolders[file.category] || file.category;
-      const categoryFolder = path.join(targetFolder, subFolderName);
-      const targetPath = getUniqueDestination(categoryFolder, file.name);
+    // 3. Organization Strategy Routing
+    if (settings.enableCategorize) {
+      const { relativeFolder, reason } = resolveStrategyPath(file, settings);
+      const destinationFolder = path.join(targetFolder, relativeFolder);
+      const targetPath = getUniqueDestination(destinationFolder, file.name);
 
-      // Only move if not already in that category folder
-      if (path.dirname(file.path) !== categoryFolder) {
+      // Only move if not already in that exact folder
+      if (path.dirname(file.path) !== destinationFolder) {
         actions.push({
           id: Math.random().toString(36).substring(2, 9),
           type: 'move',
@@ -106,7 +197,7 @@ export async function createTidyPlan(targetFolder: string, settings: TidySetting
           targetPath,
           fileName: file.name,
           fileSize: file.size,
-          reason: `Organized into ${subFolderName} by semantic rule`,
+          reason,
           category: file.category
         });
       }

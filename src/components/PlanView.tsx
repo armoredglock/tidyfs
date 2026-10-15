@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowRight, Check, Eye, FileText, ExternalLink, Sparkles, Filter, Search, ArrowUpDown, Ban } from 'lucide-react';
-import { TidyPlan, TidyAction, Category } from '../types.js';
+import { TidyPlan, TidyAction, Category, OrganizationStrategy } from '../types.js';
 import { formatBytes } from './StatsCards.js';
 
 interface PlanViewProps {
@@ -11,12 +11,18 @@ interface PlanViewProps {
   isExecuting: boolean;
   onRevealFile: (path: string) => void;
   filterCategory?: Category | 'all';
+  currentStrategy?: OrganizationStrategy;
+  onChangeStrategy?: (strategy: OrganizationStrategy) => void;
+  onOpenSettings?: () => void;
 }
 
 const CATEGORY_TINTS: Record<Category, string> = {
   Finances: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800',
   Travel: 'bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border-sky-300 dark:border-sky-800',
+  Legal: 'bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800',
+  Academic: 'bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border-teal-300 dark:border-teal-800',
   Media: 'bg-purple-50 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border-purple-300 dark:border-purple-800',
+  Design: 'bg-fuchsia-50 dark:bg-fuchsia-950/60 text-fuchsia-800 dark:text-fuchsia-300 border-fuchsia-300 dark:border-fuchsia-800',
   Documents: 'bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-800',
   Code: 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800',
   Archives: 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800',
@@ -33,7 +39,10 @@ export const PlanView: React.FC<PlanViewProps> = ({
   onExecute,
   isExecuting,
   onRevealFile,
-  filterCategory = 'all'
+  filterCategory = 'all',
+  currentStrategy = 'category',
+  onChangeStrategy,
+  onOpenSettings
 }) => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [viewState, setViewState] = useState<'auto' | 'success' | 'table'>('auto');
@@ -149,6 +158,48 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
   return (
     <div className="space-y-3 pt-1 select-none flex flex-col">
+      {/* Segregation Strategy Control Deck */}
+      <div className="card-brute px-3.5 py-2.5 flex flex-col md:flex-row md:items-center justify-between gap-2.5 bg-slate-100/70 dark:bg-[#070b14] border border-slate-300 dark:border-slate-800 rounded">
+        <div className="flex items-center gap-2">
+          <span className="telemetry-tag text-slate-500 dark:text-slate-400">
+            SEGREGATION STRATEGY:
+          </span>
+          <span className="text-xs font-mono font-black text-slate-900 dark:text-white uppercase">
+            {currentStrategy?.replace(/-/g, ' ') || 'SEMANTIC CATEGORY'}
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {[
+            { id: 'category' as OrganizationStrategy, label: 'CATEGORY' },
+            { id: 'date-year-month' as OrganizationStrategy, label: 'TIMELINE (YYYY/MM)' },
+            { id: 'extension' as OrganizationStrategy, label: 'FORMAT (EXT)' },
+            { id: 'size-tier' as OrganizationStrategy, label: 'SIZE TIERS' },
+            { id: 'custom-rules' as OrganizationStrategy, label: 'CUSTOM RULES' }
+          ].map(st => (
+            <button
+              key={st.id}
+              onClick={() => onChangeStrategy?.(st.id)}
+              className={`px-2 py-0.5 rounded text-[10px] font-mono font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
+                currentStrategy === st.id
+                  ? 'bg-emerald-600 dark:bg-emerald-500 text-slate-950 font-black shadow-2xs'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-slate-400'
+              }`}
+            >
+              {st.label}
+            </button>
+          ))}
+          {onOpenSettings && (
+            <button
+              onClick={onOpenSettings}
+              className="px-2 py-0.5 rounded text-[10px] font-mono font-extrabold text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/40 hover:bg-blue-100 cursor-pointer"
+              title="Configure Custom Rules & Strategy"
+            >
+              RULES...
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Functional Filter & Search Bar */}
       <div className="card-brute p-3 flex flex-col md:flex-row items-center justify-between gap-3 transition-colors">
         {/* Live Search Input */}
@@ -165,11 +216,11 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
         {/* Category Pill Filters */}
         <div className="flex items-center gap-1 flex-wrap text-xs font-mono">
-          {(['all', 'Finances', 'Travel', 'Media', 'Documents', 'Code', 'Archives', 'Installers'] as const).map(cat => (
+          {(['all', 'Finances', 'Travel', 'Legal', 'Academic', 'Media', 'Design', 'Documents', 'Code', 'Archives', 'Installers'] as const).map(cat => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-2 py-0.5 rounded text-[11px] font-extrabold transition-all cursor-pointer ${
+              className={`px-2 py-0.5 rounded text-[10px] font-extrabold transition-all cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-2xs'
                   : 'bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700'
