@@ -2,7 +2,10 @@
   "name": "tidyfs",
   "version": "1.0.0",
   "description": "The Intelligent, Self-Cleaning File Organism for your Desktop",
-  "author": "TidyFS Team",
+  "author": {
+    "name": "Sagnik Datta",
+    "email": "sagnik.datta111@gmail.com"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/armoredglock/tidyfs.git"

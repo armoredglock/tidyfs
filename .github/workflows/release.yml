@@ -12,6 +12,7 @@ permissions:
 jobs:
   build-release:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest
@@ -30,7 +31,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install Dependencies
@@ -43,21 +44,15 @@ jobs:
 
       - name: Package Windows Executables
         if: matrix.platform == 'win'
-        run: npx electron-builder --win
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --win -c.publish=never
 
       - name: Package macOS Disk Images
         if: matrix.platform == 'mac'
-        run: npx electron-builder --mac
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --mac -c.publish=never
 
       - name: Package Linux AppImage & Deb
         if: matrix.platform == 'linux'
-        run: npx electron-builder --linux
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --linux -c.publish=never
 
       - name: Publish Artifacts to GitHub Release
         uses: softprops/action-gh-release@v2
