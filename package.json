@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "The Intelligent, Self-Cleaning File Organism for your Desktop",
   "author": "TidyFS Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/armoredglock/tidyfs.git"
+  },
   "main": "dist-electron/electron/main.js",
   "scripts": {
     "dev": "vite",

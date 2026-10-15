@@ -30,7 +30,7 @@ Write-Host "========================================================" -Foregroun
 Write-Host ""
 
 $fileName = if ($Portable) { "TidyFS $Version.exe" } else { "TidyFS Setup $Version.exe" }
-$downloadUrl = "https://github.com/tidyfs/tidyfs/releases/download/v$Version/$([Uri]::EscapeDataString($fileName))"
+$downloadUrl = "https://github.com/armoredglock/tidyfs/releases/download/v$Version/$([Uri]::EscapeDataString($fileName))"
 $localReleasePath = Join-Path $PSScriptRoot "..\release\$fileName"
 
 # Check local release first

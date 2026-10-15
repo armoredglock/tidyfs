@@ -37,7 +37,7 @@ if exist "..\\release\\%INSTALLER%" (
     start "" "..\\release\\%INSTALLER%"
 ) else (
     echo [INFO] Downloading %INSTALLER%...
-    curl -L -O "https://github.com/tidyfs/tidyfs/releases/download/v%VERSION%/%INSTALLER%"
+    curl -L -O "https://github.com/armoredglock/tidyfs/releases/download/v%VERSION%/%INSTALLER%"
     start "" "%INSTALLER%"
 )
 exit /b 0`;
@@ -56,7 +56,7 @@ if [ -f "../release/\${DMG}" ]; then
     hdiutil detach /tmp/tidyfs_mount -quiet
     open /Applications/TidyFS.app
 else
-    curl -fSL "https://github.com/tidyfs/tidyfs/releases/download/v\${VERSION}/\${DMG}" -o "/tmp/\${DMG}"
+    curl -fSL "https://github.com/armoredglock/tidyfs/releases/download/v\${VERSION}/\${DMG}" -o "/tmp/\${DMG}"
     hdiutil attach "/tmp/\${DMG}" -mountpoint /tmp/tidyfs_mount -quiet
     cp -R /tmp/tidyfs_mount/TidyFS.app /Applications/
     hdiutil detach /tmp/tidyfs_mount -quiet
@@ -72,7 +72,7 @@ mkdir -p "\${BIN_DIR}"
 if [ -f "../release/TidyFS-\${VERSION}-x86_64.AppImage" ]; then
     cp "../release/TidyFS-\${VERSION}-x86_64.AppImage" "\${BIN_DIR}/tidyfs"
 else
-    curl -fSL "https://github.com/tidyfs/tidyfs/releases/download/v\${VERSION}/TidyFS-\${VERSION}-x86_64.AppImage" -o "\${BIN_DIR}/tidyfs"
+    curl -fSL "https://github.com/armoredglock/tidyfs/releases/download/v\${VERSION}/TidyFS-\${VERSION}-x86_64.AppImage" -o "\${BIN_DIR}/tidyfs"
 fi
 chmod +x "\${BIN_DIR}/tidyfs"
 echo "[SUCCESS] TidyFS installed at \${BIN_DIR}/tidyfs"
@@ -170,7 +170,7 @@ echo "[SUCCESS] TidyFS installed at \${BIN_DIR}/tidyfs"
               </button>
 
               <button
-                onClick={() => handleCopy('curl -fsSL https://raw.githubusercontent.com/tidyfs/tidyfs/main/downloaders/download-mac.sh | bash', 'mac')}
+                onClick={() => handleCopy('curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-mac.sh | bash', 'mac')}
                 className="btn-normal flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-650 text-slate-800 dark:text-slate-200 font-extrabold text-xs border border-slate-300 dark:border-slate-600 cursor-pointer shadow-2xs"
               >
                 {copiedIndex === 'mac' ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Terminal className="h-3.5 w-3.5 text-slate-500" />}
@@ -207,7 +207,7 @@ echo "[SUCCESS] TidyFS installed at \${BIN_DIR}/tidyfs"
               </button>
 
               <button
-                onClick={() => handleCopy('curl -fsSL https://raw.githubusercontent.com/tidyfs/tidyfs/main/downloaders/download-linux.sh | bash', 'linux')}
+                onClick={() => handleCopy('curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-linux.sh | bash', 'linux')}
                 className="btn-normal flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-650 text-slate-800 dark:text-slate-200 font-extrabold text-xs border border-slate-300 dark:border-slate-600 cursor-pointer shadow-2xs"
               >
                 {copiedIndex === 'linux' ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Terminal className="h-3.5 w-3.5 text-slate-500" />}

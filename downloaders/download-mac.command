@@ -29,8 +29,8 @@ fi
 
 DMG_NAME="TidyFS-${VERSION}-${ARCH_TAG}.dmg"
 ZIP_NAME="TidyFS-${VERSION}-mac.zip"
-DOWNLOAD_URL="https://github.com/tidyfs/tidyfs/releases/download/v${VERSION}/${DMG_NAME}"
-FALLBACK_ZIP_URL="https://github.com/tidyfs/tidyfs/releases/download/v${VERSION}/${ZIP_NAME}"
+DOWNLOAD_URL="https://github.com/armoredglock/tidyfs/releases/download/v${VERSION}/${DMG_NAME}"
+FALLBACK_ZIP_URL="https://github.com/armoredglock/tidyfs/releases/download/v${VERSION}/${ZIP_NAME}"
 
 LOCAL_DMG="../release/${DMG_NAME}"
 LOCAL_ZIP="../release/${ZIP_NAME}"

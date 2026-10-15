@@ -14,7 +14,7 @@ set "APP_NAME=TidyFS"
 set "VERSION=1.0.0"
 set "INSTALLER_EXE=TidyFS Setup %VERSION%.exe"
 set "PORTABLE_EXE=TidyFS %VERSION%.exe"
-set "DOWNLOAD_URL=https://github.com/tidyfs/tidyfs/releases/download/v%VERSION%/%INSTALLER_EXE%"
+set "DOWNLOAD_URL=https://github.com/armoredglock/tidyfs/releases/download/v%VERSION%/%INSTALLER_EXE%"
 set "TARGET_DIR=%TEMP%\TidyFS_Installer"
 
 if not exist "%TARGET_DIR%" mkdir "%TARGET_DIR%"

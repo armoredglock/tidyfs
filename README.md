@@ -8,7 +8,7 @@ A high-performance desktop application for Windows, macOS, and Linux that system
 
 End users **do not need Node.js, npm, or terminal commands**. Standalone production binaries bundle all necessary runtimes into a single installable package.
 
-Download the installer for your operating system from the [Latest GitHub Release](https://github.com/tidyfs/tidyfs/releases/latest):
+Download the installer for your operating system from the [Latest GitHub Release](https://github.com/armoredglock/tidyfs/releases/latest):
 
 | Operating System | Recommended Package | Description |
 | :--- | :--- | :--- |
@@ -123,7 +123,7 @@ If you are contributing to TidyFS or building from source, the following develop
 ### Local Development Mode
 ```bash
 # Clone the repository
-git clone https://github.com/tidyfs/tidyfs.git
+git clone https://github.com/armoredglock/tidyfs.git
 cd tidyfs
 
 # Install dependencies

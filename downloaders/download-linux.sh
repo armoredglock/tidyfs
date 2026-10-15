@@ -29,7 +29,7 @@ fi
 
 APPIMAGE_NAME="TidyFS-${VERSION}-${ARCH_TAG}.AppImage"
 DEB_NAME="tidyfs_${VERSION}_amd64.deb"
-DOWNLOAD_URL="https://github.com/tidyfs/tidyfs/releases/download/v${VERSION}/${APPIMAGE_NAME}"
+DOWNLOAD_URL="https://github.com/armoredglock/tidyfs/releases/download/v${VERSION}/${APPIMAGE_NAME}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOCAL_APPIMAGE="${SCRIPT_DIR}/../release/${APPIMAGE_NAME}"
