@@ -30,6 +30,14 @@ Download the installer for your operating system from the [Latest GitHub Release
 2. Double-click the DMG and drag **TidyFS** into your **Applications** folder.
 3. Launch TidyFS from Spotlight or Launchpad.
 
+> **Note on macOS Gatekeeper ("App is damaged or tampered with"):**  
+> On macOS Sequoia, Sonoma, and Ventura, apps downloaded via browsers without a paid Apple Developer ID certificate trigger Apple's Gatekeeper quarantine message.  
+> **To resolve in 1 second:** Open Terminal and paste:  
+> ```bash
+> xattr -cr /Applications/TidyFS.app
+> ```  
+> Or download using `download-mac.command` which clears the attribute automatically.
+
 #### Linux
 1. Download `TidyFS-1.0.0-x86_64.AppImage`.
 2. Open terminal and enable executable permissions:

@@ -97,7 +97,7 @@ fi
 # 4. Remove quarantine attribute for unsigned builds
 if [ -d "/Applications/TidyFS.app" ]; then
     echo "[STATUS] Adjusting system gatekeeper attributes..."
-    xattr -dr com.apple.quarantine /Applications/TidyFS.app 2>/dev/null || true
+    xattr -cr /Applications/TidyFS.app 2>/dev/null || xattr -dr com.apple.quarantine /Applications/TidyFS.app 2>/dev/null || true
     
     echo ""
     echo "========================================================"
