@@ -44,20 +44,21 @@ jobs:
 
       - name: Package Windows Executables
         if: matrix.platform == 'win'
-        run: npx electron-builder --win -c.publish=never
+        run: npx electron-builder --win -p never
 
       - name: Package macOS Disk Images
         if: matrix.platform == 'mac'
-        run: npx electron-builder --mac -c.publish=never
+        run: npx electron-builder --mac -p never
 
       - name: Package Linux AppImage & Deb
         if: matrix.platform == 'linux'
-        run: npx electron-builder --linux -c.publish=never
+        run: npx electron-builder --linux -p never
 
       - name: Publish Artifacts to GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: ${{ github.ref_name }}
           files: |
             release/*.exe
             release/*.dmg
