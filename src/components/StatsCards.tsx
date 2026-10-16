@@ -27,12 +27,13 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ plan, files }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 select-none">
       {/* 1. Monitored Storage */}
-      <div className="card-brute p-3.5 flex flex-col justify-between transition-colors border-l-4 border-l-blue-600 dark:border-l-blue-500">
+      <div className="card-brute p-3.5 flex flex-col justify-between transition-all relative overflow-hidden group hover:-translate-y-0.5">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-sky-400 opacity-90" />
         <div className="flex items-center justify-between">
           <span className="telemetry-tag text-slate-500 dark:text-slate-400">
             FS // MONITORED
           </span>
-          <div className="h-6 w-6 rounded bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 flex items-center justify-center">
+          <div className="h-6 w-6 rounded bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 flex items-center justify-center group-hover:scale-105 transition-transform">
             <Files className="h-3.5 w-3.5" />
           </div>
         </div>
@@ -54,12 +55,13 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ plan, files }) => {
       </div>
 
       {/* 2. Pending Categorization */}
-      <div className="card-brute p-3.5 flex flex-col justify-between transition-colors border-l-4 border-l-emerald-600 dark:border-l-emerald-500">
+      <div className="card-brute p-3.5 flex flex-col justify-between transition-all relative overflow-hidden group hover:-translate-y-0.5">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400 opacity-90" />
         <div className="flex items-center justify-between">
           <span className="telemetry-tag text-slate-500 dark:text-slate-400">
             RULES // TO_SORT
           </span>
-          <div className="h-6 w-6 rounded bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center">
+          <div className="h-6 w-6 rounded bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center group-hover:scale-105 transition-transform">
             <FolderSync className="h-3.5 w-3.5" />
           </div>
         </div>
@@ -75,7 +77,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ plan, files }) => {
           </div>
           <div className="mt-1 flex items-center justify-between text-xs font-mono font-bold text-slate-600 dark:text-slate-300">
             <span>STATUS:</span>
-            <span className={pendingActions > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}>
+            <span className={pendingActions > 0 ? "text-emerald-600 dark:text-emerald-400 font-extrabold" : "text-slate-400"}>
               {pendingActions > 0 ? 'READY TO APPLY' : 'ALL SORTED'}
             </span>
           </div>
@@ -83,12 +85,13 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ plan, files }) => {
       </div>
 
       {/* 3. Expired Installers & Archives */}
-      <div className="card-brute p-3.5 flex flex-col justify-between transition-colors border-l-4 border-l-amber-600 dark:border-l-amber-500">
+      <div className="card-brute p-3.5 flex flex-col justify-between transition-all relative overflow-hidden group hover:-translate-y-0.5">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-400 opacity-90" />
         <div className="flex items-center justify-between">
           <span className="telemetry-tag text-slate-500 dark:text-slate-400">
             DECAY // OBSOLETE
           </span>
-          <div className="h-6 w-6 rounded bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 flex items-center justify-center">
+          <div className="h-6 w-6 rounded bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 flex items-center justify-center group-hover:scale-105 transition-transform">
             <Clock className="h-3.5 w-3.5" />
           </div>
         </div>
@@ -110,12 +113,13 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ plan, files }) => {
       </div>
 
       {/* 4. Duplicate Clutter */}
-      <div className="card-brute p-3.5 flex flex-col justify-between transition-colors border-l-4 border-l-rose-600 dark:border-l-rose-500">
+      <div className="card-brute p-3.5 flex flex-col justify-between transition-all relative overflow-hidden group hover:-translate-y-0.5">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 to-red-400 opacity-90" />
         <div className="flex items-center justify-between">
           <span className="telemetry-tag text-slate-500 dark:text-slate-400">
             CLONES // DEDUP
           </span>
-          <div className="h-6 w-6 rounded bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 flex items-center justify-center">
+          <div className="h-6 w-6 rounded bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 flex items-center justify-center group-hover:scale-105 transition-transform">
             <Copy className="h-3.5 w-3.5" />
           </div>
         </div>

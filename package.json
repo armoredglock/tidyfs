@@ -33,6 +33,7 @@
       "dist-electron/**/*"
     ],
     "win": {
+      "icon": "build/icon.ico",
       "target": [
         "nsis",
         "portable"
@@ -46,12 +47,14 @@
       "shortcutName": "TidyFS"
     },
     "mac": {
+      "icon": "build/icon.png",
       "target": [
         "dmg",
         "zip"
       ]
     },
     "linux": {
+      "icon": "build/icon.png",
       "target": [
         "AppImage",
         "deb"

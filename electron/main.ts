@@ -34,7 +34,23 @@ function saveUserSettings(settings: TidySettings): void {
   }
 }
 
+function getAppIcon(): string | undefined {
+  const possiblePaths = [
+    path.join(__dirname, '../../build/icon.ico'),
+    path.join(__dirname, '../../public/icon.png'),
+    path.join(app.getAppPath(), 'build/icon.ico'),
+    path.join(app.getAppPath(), 'dist/icon.png'),
+    path.join(process.resourcesPath, 'icon.ico'),
+    path.join(process.resourcesPath, 'icon.png')
+  ];
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) return p;
+  }
+  return undefined;
+}
+
 function createWindow(): void {
+  const appIcon = getAppIcon();
   mainWindow = new BrowserWindow({
     width: 1240,
     height: 840,
@@ -42,6 +58,7 @@ function createWindow(): void {
     minHeight: 650,
     backgroundColor: '#030712', // slate-950
     title: 'TidyFS — The Intelligent File Organism',
+    icon: appIcon,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,

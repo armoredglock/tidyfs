@@ -315,14 +315,14 @@ export const PlanView: React.FC<PlanViewProps> = ({
           <button
             onClick={() => onExecute(selectedActions)}
             disabled={isExecuting || selectedActions.length === 0}
-            className={`btn-brute flex items-center gap-1.5 px-4 py-1.5 rounded font-black text-xs uppercase tracking-wider cursor-pointer disabled:opacity-40 border shadow-2xs ${
+            className={`btn-brute flex items-center gap-1.5 px-4 py-1.5 rounded font-black text-xs uppercase tracking-wider cursor-pointer disabled:opacity-40 border transition-all ${
               dryRun
-                ? 'bg-indigo-600 hover:bg-indigo-500 text-white border-indigo-700'
-                : 'bg-emerald-600 hover:bg-emerald-500 text-slate-950 border-emerald-700 font-black'
+                ? 'bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 border-slate-900 dark:border-white shadow-2xs'
+                : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 border-emerald-600 dark:border-emerald-400 font-black shadow-md glow-emerald'
             }`}
           >
-            {dryRun ? <Eye className="h-3.5 w-3.5" /> : <Sparkles className="h-3.5 w-3.5" />}
-            {isExecuting ? 'PROCESSING...' : dryRun ? 'PREVIEW EXECUTION' : 'EXECUTE NOW'}
+            {dryRun ? <Eye className="h-3.5 w-3.5 text-emerald-400 dark:text-emerald-600" /> : <Sparkles className="h-3.5 w-3.5 text-slate-950" />}
+            {isExecuting ? 'PROCESSING...' : dryRun ? 'PREVIEW EXECUTION' : 'EXECUTE LIVE'}
           </button>
         </div>
       </div>

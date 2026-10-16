@@ -50,33 +50,60 @@
   }
 }
 
-/* Brute & Industrial Component Utility Styles */
+/* Brute & Apple-Inspired Industrial Surface Utilities */
 .card-normal,
 .card-brute {
   background-color: #ffffff;
   border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .dark .card-normal,
 .dark .card-brute {
   background-color: #0b1120;
   border-color: #1e293b;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
 }
 
+.card-brute:hover {
+  border-color: #94a3b8;
+}
+
+.dark .card-brute:hover {
+  border-color: #334155;
+}
+
+/* Translucent Frosted Glass Material */
+.glass-surface {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-surface {
+  background: rgba(11, 17, 32, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Tactile Spring Press Physics */
 .btn-normal,
 .btn-brute {
   user-select: none;
   font-weight: 800;
   letter-spacing: -0.01em;
-  transition: all 0.12s ease;
+  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
 }
 
 .btn-normal:active,
 .btn-brute:active {
-  transform: translateY(1px);
+  transform: scale(0.975);
 }
 
 /* Sharp Telemetry Monospace Helpers */
@@ -84,6 +111,11 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+
+/* Subtle Emerald Accented Orbit Glow */
+.glow-emerald {
+  box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.25);
 }

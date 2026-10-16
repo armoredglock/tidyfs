@@ -1,5 +1,6 @@
 import React from 'react';
-import { Folder, RotateCcw, Settings, RefreshCw, FolderSearch, Sun, Moon, Download, Terminal, Layers, ShieldCheck } from 'lucide-react';
+import { Folder, RotateCcw, Settings, RefreshCw, FolderSearch, Sun, Moon, Download, ShieldCheck } from 'lucide-react';
+import iconImg from '../assets/icon.png';
 
 interface HeaderProps {
   currentFolder: string;
@@ -31,12 +32,17 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleTheme
 }) => {
   return (
-    <header className="w-full bg-white dark:bg-[#070b14] border-b border-slate-300 dark:border-slate-800 px-6 py-2.5 select-none transition-colors">
+    <header className="sticky top-0 z-40 w-full bg-white/85 dark:bg-[#070b14]/85 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800/80 px-6 py-2.5 select-none transition-colors">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         {/* Brand & Engine Telemetry Indicator */}
         <div className="flex items-center gap-3 shrink-0">
-          <div className="h-8 w-8 rounded bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center font-black tracking-tighter text-sm shadow-2xs">
-            <Layers className="h-4 w-4" />
+          <div className="relative group flex items-center justify-center shrink-0">
+            <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-emerald-500/40 via-teal-400/40 to-emerald-600/40 blur-[3px] opacity-75 group-hover:opacity-100 transition duration-300" />
+            <img
+              src={iconImg}
+              alt="TidyFS"
+              className="relative h-8 w-8 rounded-full object-cover ring-1 ring-emerald-500/50 shadow-sm"
+            />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
@@ -48,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
               <button
                 onClick={onOpenSettings}
-                className="btn-brute hidden sm:flex items-center gap-1 text-[10px] font-mono font-extrabold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 cursor-pointer"
+                className="btn-brute hidden sm:flex items-center gap-1 text-[10px] font-mono font-extrabold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 cursor-pointer hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors"
                 title="100% Air-Gapped // Strict Metadata Only // Zero Content Scanning"
               >
                 <ShieldCheck className="h-3 w-3" />
