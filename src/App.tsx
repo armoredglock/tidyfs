@@ -370,21 +370,12 @@ export const App: React.FC = () => {
   return (
     <div className={`min-h-screen w-full ${
       osTheme === 'mac'
-        ? 'bg-[#eef2f8]/70 dark:bg-[#070a14]/80 text-slate-900 dark:text-slate-100'
+        ? 'bg-[#ebedf2] dark:bg-[#0a0d14] text-slate-900 dark:text-slate-100'
         : 'bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100'
     } flex flex-col font-sans select-none transition-colors relative overflow-x-hidden`}>
-      {/* macOS Liquid Glass Chromatic Aurora Underlay */}
+      {/* macOS Professional Neutral Vignette (Clean & Monochrome) */}
       {osTheme === 'mac' && (
-        <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-          {/* Top-Left Azure & Indigo Glow Orb */}
-          <div className="absolute -top-36 -left-36 w-[680px] h-[680px] rounded-full bg-gradient-to-br from-indigo-500/25 via-sky-400/20 to-transparent blur-[110px] dark:from-indigo-600/35 dark:via-sky-500/20" />
-          {/* Top-Right Fuchsia & Violet Aurora Orb */}
-          <div className="absolute top-[8%] -right-36 w-[720px] h-[720px] rounded-full bg-gradient-to-bl from-fuchsia-500/20 via-purple-500/20 to-transparent blur-[120px] dark:from-purple-700/30 dark:via-fuchsia-600/20" />
-          {/* Bottom-Center Emerald & Teal Wave Orb */}
-          <div className="absolute -bottom-36 left-[20%] w-[780px] h-[780px] rounded-full bg-gradient-to-tr from-emerald-400/22 via-teal-500/18 to-transparent blur-[130px] dark:from-emerald-500/25 dark:via-teal-600/20" />
-          {/* Ambient Center Blue Shimmer */}
-          <div className="absolute top-[40%] right-[30%] w-[520px] h-[520px] rounded-full bg-gradient-to-r from-blue-400/12 to-indigo-400/12 blur-[100px] dark:from-blue-600/18 dark:to-indigo-700/18" />
-        </div>
+        <div className="pointer-events-none fixed inset-0 overflow-hidden z-0 bg-gradient-to-b from-white/40 via-transparent to-black/5 dark:from-white/5 dark:via-transparent dark:to-black/30" />
       )}
 
       {/* Toast Notification */}
