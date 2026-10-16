@@ -58,23 +58,36 @@ fi
 # 2. Download if not found locally
 if [ -z "$INSTALL_SOURCE" ]; then
     echo "[INFO] Downloading TidyFS for macOS..."
-    echo "[INFO] Source URL: $DOWNLOAD_URL"
     
-    DOWNLOAD_TARGET="${TARGET_DIR}/${DMG_NAME}"
-    if curl -fSL --progress-bar "$DOWNLOAD_URL" -o "$DOWNLOAD_TARGET"; then
-        INSTALL_SOURCE="$DOWNLOAD_TARGET"
-        echo "[SUCCESS] Downloaded disk image successfully."
-    else
-        echo "[WARNING] DMG download failed, attempting zip release..."
-        DOWNLOAD_TARGET="${TARGET_DIR}/${ZIP_NAME}"
-        if curl -fSL --progress-bar "$FALLBACK_ZIP_URL" -o "$DOWNLOAD_TARGET"; then
+    for CANDIDATE_DMG in "${DMG_NAME}" "TidyFS-${VERSION}-arm64.dmg" "TidyFS-${VERSION}.dmg"; do
+        URL="https://github.com/armoredglock/tidyfs/releases/download/v${VERSION}/${CANDIDATE_DMG}"
+        DOWNLOAD_TARGET="${TARGET_DIR}/${CANDIDATE_DMG}"
+        echo "[INFO] Attempting download: ${CANDIDATE_DMG}..."
+        if curl -fSL --progress-bar "$URL" -o "$DOWNLOAD_TARGET"; then
             INSTALL_SOURCE="$DOWNLOAD_TARGET"
-            echo "[SUCCESS] Downloaded application zip successfully."
-        else
-            echo "[ERROR] Failed to download TidyFS release package."
-            echo "[INFO] Please verify your network connection or build locally with 'npm run dist:mac'."
-            exit 1
+            echo "[SUCCESS] Downloaded disk image successfully."
+            break
         fi
+    done
+
+    if [ -z "$INSTALL_SOURCE" ]; then
+        echo "[WARNING] DMG download failed, attempting zip release..."
+        for CANDIDATE_ZIP in "${ZIP_NAME}" "TidyFS-${VERSION}-arm64-mac.zip" "TidyFS-${VERSION}-mac.zip"; do
+            URL="https://github.com/armoredglock/tidyfs/releases/download/v${VERSION}/${CANDIDATE_ZIP}"
+            DOWNLOAD_TARGET="${TARGET_DIR}/${CANDIDATE_ZIP}"
+            echo "[INFO] Attempting download: ${CANDIDATE_ZIP}..."
+            if curl -fSL --progress-bar "$URL" -o "$DOWNLOAD_TARGET"; then
+                INSTALL_SOURCE="$DOWNLOAD_TARGET"
+                echo "[SUCCESS] Downloaded application zip successfully."
+                break
+            fi
+        done
+    fi
+
+    if [ -z "$INSTALL_SOURCE" ]; then
+        echo "[ERROR] Failed to download TidyFS release package."
+        echo "[INFO] Please verify your network connection or build locally with 'npm run dist:mac'."
+        exit 1
     fi
 fi
 

@@ -70,11 +70,19 @@ fi
 # 2. Download AppImage if not present locally
 if [ ! -f "$TARGET_BIN" ]; then
     echo "[INFO] Downloading universal Linux AppImage..."
-    echo "[INFO] Source URL: $DOWNLOAD_URL"
+    DOWNLOAD_SUCCESS=false
     
-    if curl -fSL --progress-bar "$DOWNLOAD_URL" -o "$TARGET_BIN"; then
-        echo "[SUCCESS] Download completed."
-    else
+    for CANDIDATE in "TidyFS-${VERSION}.AppImage" "TidyFS-${VERSION}-${ARCH_TAG}.AppImage" "tidyfs-${VERSION}.AppImage"; do
+        URL="https://github.com/armoredglock/tidyfs/releases/download/v${VERSION}/${CANDIDATE}"
+        echo "[INFO] Attempting download: ${CANDIDATE}..."
+        if curl -fSL --progress-bar "$URL" -o "$TARGET_BIN"; then
+            DOWNLOAD_SUCCESS=true
+            echo "[SUCCESS] Download completed."
+            break
+        fi
+    done
+
+    if [ "$DOWNLOAD_SUCCESS" = false ]; then
         echo "[ERROR] Download failed. Check your internet connection."
         echo "[INFO] If building from source, run 'npm run dist:linux' inside the repository."
         exit 1

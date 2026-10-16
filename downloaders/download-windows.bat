@@ -12,8 +12,8 @@ echo.
 
 set "APP_NAME=TidyFS"
 set "VERSION=1.0.0"
-set "INSTALLER_EXE=TidyFS Setup %VERSION%.exe"
-set "PORTABLE_EXE=TidyFS %VERSION%.exe"
+set "INSTALLER_EXE=TidyFS.Setup.%VERSION%.exe"
+set "LOCAL_ALT=TidyFS Setup %VERSION%.exe"
 set "DOWNLOAD_URL=https://github.com/armoredglock/tidyfs/releases/download/v%VERSION%/%INSTALLER_EXE%"
 set "TARGET_DIR=%TEMP%\TidyFS_Installer"
 
@@ -26,9 +26,21 @@ if exist "%~dp0..\release\%INSTALLER_EXE%" (
     goto LaunchLocal
 )
 
+if exist "%~dp0..\release\%LOCAL_ALT%" (
+    echo [INFO] Found local installer in release folder.
+    set "LOCAL_SOURCE=%~dp0..\release\%LOCAL_ALT%"
+    goto LaunchLocal
+)
+
 if exist "%~dp0%INSTALLER_EXE%" (
     echo [INFO] Found installer in current folder.
     set "LOCAL_SOURCE=%~dp0%INSTALLER_EXE%"
+    goto LaunchLocal
+)
+
+if exist "%~dp0%LOCAL_ALT%" (
+    echo [INFO] Found installer in current folder.
+    set "LOCAL_SOURCE=%~dp0%LOCAL_ALT%"
     goto LaunchLocal
 )
 

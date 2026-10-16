@@ -31,10 +31,12 @@ export const DownloadersModal: React.FC<DownloadersModalProps> = ({ isOpen, onCl
 
   const WINDOWS_BAT_SNIPPET = `@echo off
 set "VERSION=1.0.0"
-set "INSTALLER=TidyFS Setup %VERSION%.exe"
+set "INSTALLER=TidyFS.Setup.%VERSION%.exe"
 echo [STATUS] Launching TidyFS Windows Installer...
 if exist "..\\release\\%INSTALLER%" (
     start "" "..\\release\\%INSTALLER%"
+) else if exist "..\\release\\TidyFS Setup %VERSION%.exe" (
+    start "" "..\\release\\TidyFS Setup %VERSION%.exe"
 ) else (
     echo [INFO] Downloading %INSTALLER%...
     curl -L -O "https://github.com/armoredglock/tidyfs/releases/download/v%VERSION%/%INSTALLER%"
@@ -48,7 +50,8 @@ echo "========================================================"
 echo "               TidyFS - macOS Downloader"
 echo "========================================================"
 ARCH=$(uname -m)
-DMG="TidyFS-\${VERSION}-\${ARCH}.dmg"
+DMG="TidyFS-\${VERSION}-arm64.dmg"
+[ "$ARCH" = "x86_64" ] && DMG="TidyFS-\${VERSION}-x64.dmg"
 echo "[STATUS] Installing TidyFS to /Applications..."
 if [ -f "../release/\${DMG}" ]; then
     hdiutil attach "../release/\${DMG}" -mountpoint /tmp/tidyfs_mount -quiet
@@ -56,7 +59,8 @@ if [ -f "../release/\${DMG}" ]; then
     hdiutil detach /tmp/tidyfs_mount -quiet
     open /Applications/TidyFS.app
 else
-    curl -fSL "https://github.com/armoredglock/tidyfs/releases/download/v\${VERSION}/\${DMG}" -o "/tmp/\${DMG}"
+    curl -fSL "https://github.com/armoredglock/tidyfs/releases/download/v\${VERSION}/\${DMG}" -o "/tmp/\${DMG}" || \
+    curl -fSL "https://github.com/armoredglock/tidyfs/releases/download/v\${VERSION}/TidyFS-\${VERSION}-arm64.dmg" -o "/tmp/\${DMG}"
     hdiutil attach "/tmp/\${DMG}" -mountpoint /tmp/tidyfs_mount -quiet
     cp -R /tmp/tidyfs_mount/TidyFS.app /Applications/
     hdiutil detach /tmp/tidyfs_mount -quiet
@@ -69,9 +73,12 @@ VERSION="1.0.0"
 echo "[STATUS] Installing TidyFS on Linux..."
 BIN_DIR="\${HOME}/.local/bin"
 mkdir -p "\${BIN_DIR}"
-if [ -f "../release/TidyFS-\${VERSION}-x86_64.AppImage" ]; then
+if [ -f "../release/TidyFS-\${VERSION}.AppImage" ]; then
+    cp "../release/TidyFS-\${VERSION}.AppImage" "\${BIN_DIR}/tidyfs"
+elif [ -f "../release/TidyFS-\${VERSION}-x86_64.AppImage" ]; then
     cp "../release/TidyFS-\${VERSION}-x86_64.AppImage" "\${BIN_DIR}/tidyfs"
 else
+    curl -fSL "https://github.com/armoredglock/tidyfs/releases/download/v\${VERSION}/TidyFS-\${VERSION}.AppImage" -o "\${BIN_DIR}/tidyfs" || \
     curl -fSL "https://github.com/armoredglock/tidyfs/releases/download/v\${VERSION}/TidyFS-\${VERSION}-x86_64.AppImage" -o "\${BIN_DIR}/tidyfs"
 fi
 chmod +x "\${BIN_DIR}/tidyfs"

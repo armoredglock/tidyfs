@@ -29,40 +29,69 @@ Write-Host "   Intelligent, Self-Cleaning File Organism for Desktop" -Foreground
 Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host ""
 
-$fileName = if ($Portable) { "TidyFS $Version.exe" } else { "TidyFS Setup $Version.exe" }
-$downloadUrl = "https://github.com/armoredglock/tidyfs/releases/download/v$Version/$([Uri]::EscapeDataString($fileName))"
-$localReleasePath = if (![string]::IsNullOrEmpty($PSScriptRoot)) { Join-Path $PSScriptRoot "..\release\$fileName" } else { $null }
-
-# Check local release first
-if ($localReleasePath -and (Test-Path $localReleasePath)) {
-    Write-Host "[INFO] Detected local release executable at: $localReleasePath" -ForegroundColor Green
-    $targetFile = $localReleasePath
+$candidateNames = if ($Portable) {
+    @("TidyFS.$Version.exe", "TidyFS $Version.exe", "TidyFS-$Version.exe")
 } else {
+    @("TidyFS.Setup.$Version.exe", "TidyFS Setup $Version.exe", "TidyFS-Setup-$Version.exe")
+}
+
+$targetFile = $null
+
+# Check local release folder if running from cloned repository
+if (![string]::IsNullOrEmpty($PSScriptRoot)) {
+    foreach ($name in $candidateNames) {
+        $candidateLocal = Join-Path $PSScriptRoot "..\release\$name"
+        if (Test-Path $candidateLocal) {
+            Write-Host "[INFO] Detected local release executable at: $candidateLocal" -ForegroundColor Green
+            $targetFile = $candidateLocal
+            break
+        }
+    }
+}
+
+if (-not $targetFile) {
     if (-not (Test-Path $Destination)) {
         New-Item -ItemType Directory -Path $Destination -Force | Out-Null
     }
-    $targetFile = Join-Path $Destination $fileName
 
-    Write-Host "[INFO] Target file: $fileName" -ForegroundColor Gray
-    Write-Host "[INFO] Downloading from: $downloadUrl" -ForegroundColor Gray
-    Write-Host "[STATUS] Downloading TidyFS..." -ForegroundColor Yellow
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
+    $webClient = New-Object System.Net.WebClient
+    $downloadSuccess = $false
 
-    try {
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
-        $webClient = New-Object System.Net.WebClient
-        $webClient.DownloadFile($downloadUrl, $targetFile)
-        Write-Host "[SUCCESS] Download finished: $targetFile" -ForegroundColor Green
-    } catch {
-        Write-Host "[WARNING] Remote download failed: $_" -ForegroundColor Yellow
-        Write-Host "[INFO] Checking current script directory..." -ForegroundColor Gray
-        $sameDirFile = if (![string]::IsNullOrEmpty($PSScriptRoot)) { Join-Path $PSScriptRoot $fileName } else { $null }
-        if ($sameDirFile -and (Test-Path $sameDirFile)) {
-            $targetFile = $sameDirFile
-            Write-Host "[INFO] Using binary found in current directory." -ForegroundColor Green
-        } else {
-            Write-Host "[ERROR] Could not obtain installer file." -ForegroundColor Red
-            exit 1
+    foreach ($name in $candidateNames) {
+        $downloadUrl = "https://github.com/armoredglock/tidyfs/releases/download/v$Version/$([Uri]::EscapeDataString($name))"
+        $candidateDest = Join-Path $Destination $name
+        Write-Host "[INFO] Attempting download: $name" -ForegroundColor Gray
+        try {
+            $webClient.DownloadFile($downloadUrl, $candidateDest)
+            if ((Test-Path $candidateDest) -and ((Get-Item $candidateDest).Length -gt 100000)) {
+                $targetFile = $candidateDest
+                $downloadSuccess = $true
+                Write-Host "[SUCCESS] Download finished: $targetFile" -ForegroundColor Green
+                break
+            }
+        } catch {
+            # Try next release asset format
         }
+    }
+
+    if (-not $downloadSuccess) {
+        Write-Host "[WARNING] Remote release download failed. Checking current directory..." -ForegroundColor Yellow
+        if (![string]::IsNullOrEmpty($PSScriptRoot)) {
+            foreach ($name in $candidateNames) {
+                $sameDir = Join-Path $PSScriptRoot $name
+                if (Test-Path $sameDir) {
+                    $targetFile = $sameDir
+                    Write-Host "[INFO] Using binary found in current directory: $targetFile" -ForegroundColor Green
+                    break
+                }
+            }
+        }
+    }
+
+    if (-not $targetFile) {
+        Write-Host "[ERROR] Could not obtain installer file." -ForegroundColor Red
+        exit 1
     }
 }
 
@@ -73,8 +102,11 @@ if ($Portable) {
     Start-Process -FilePath $targetFile
     Write-Host "[SUCCESS] TidyFS Portable launched." -ForegroundColor Green
 } else {
-    $arguments = if ($Silent) { "/S" } else { "" }
-    Start-Process -FilePath $targetFile -ArgumentList $arguments
+    if ($Silent) {
+        Start-Process -FilePath $targetFile -ArgumentList "/S"
+    } else {
+        Start-Process -FilePath $targetFile
+    }
     Write-Host "[SUCCESS] TidyFS Setup Wizard launched." -ForegroundColor Green
 }
 
