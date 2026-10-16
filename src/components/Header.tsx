@@ -200,45 +200,49 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* OS Persona Mode Switcher */}
-          <div className={`flex items-center p-0.5 border ${
+          <div className={`flex items-center gap-0.5 p-0.5 border ${
             osTheme === 'linux'
               ? 'rounded-none border-emerald-500 bg-black text-emerald-400'
               : osTheme === 'mac'
-              ? 'rounded-full border-black/10 dark:border-white/10 bg-white/50 dark:bg-black/30 backdrop-blur-md'
+              ? 'rounded-full border-black/10 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-md shadow-xs'
               : 'rounded-md border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800'
-          } text-[10px] font-mono font-black`}>
+          } text-[10px] font-mono font-black select-none`}>
+            <span className="text-[9px] text-slate-400 dark:text-slate-500 px-1 font-bold hidden sm:inline">OS:</span>
             <button
               onClick={() => onSelectOSTheme('windows')}
-              className={`px-1.5 py-0.5 transition-all cursor-pointer ${
+              className={`flex items-center gap-1 px-2 py-0.5 transition-all cursor-pointer ${
                 osTheme === 'windows'
-                  ? 'bg-blue-600 text-white rounded'
+                  ? 'bg-blue-600 text-white rounded font-black shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
               }`}
-              title="Windows Theme: Subtle, Bold, Functional"
+              title="Windows Theme (Ctrl+1): Subtle, Bold, Functional"
             >
-              WIN
+              <Monitor className="h-3 w-3" />
+              <span>WIN</span>
             </button>
             <button
               onClick={() => onSelectOSTheme('mac')}
-              className={`px-1.5 py-0.5 transition-all cursor-pointer ${
+              className={`flex items-center gap-1 px-2 py-0.5 transition-all cursor-pointer ${
                 osTheme === 'mac'
                   ? 'bg-emerald-500 text-slate-950 rounded-full font-black shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
               }`}
-              title="macOS Theme: Liquid Glassmorphism & Spring Motion"
+              title="macOS Theme (Ctrl+2): Liquid Glassmorphism & Spring Motion"
             >
-              MAC
+              <Apple className="h-3 w-3" />
+              <span>MAC</span>
             </button>
             <button
               onClick={() => onSelectOSTheme('linux')}
-              className={`px-1.5 py-0.5 transition-all cursor-pointer ${
+              className={`flex items-center gap-1 px-2 py-0.5 transition-all cursor-pointer ${
                 osTheme === 'linux'
                   ? 'bg-cyan-500 text-black font-black rounded-none shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
               }`}
-              title="Linux Theme: Techy & Punchy Hacker Terminal"
+              title="Linux Theme (Ctrl+3): Techy & Punchy Hacker Terminal"
             >
-              LNX
+              <Terminal className="h-3 w-3" />
+              <span>LNX</span>
             </button>
           </div>
 

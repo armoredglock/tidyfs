@@ -85,6 +85,26 @@ export const App: React.FC = () => {
     detectPlatform();
   }, []);
 
+  // Hotkeys: Ctrl+1 (Win), Ctrl+2 (Mac), Ctrl+3 (Linux)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === '1') {
+          setOsTheme('windows');
+          showToast('Switched to Windows UI: Subtle, Bold, Functional', 'info');
+        } else if (e.key === '2') {
+          setOsTheme('mac');
+          showToast('Switched to macOS UI: Liquid Glassmorphism & Spring Motion', 'info');
+        } else if (e.key === '3') {
+          setOsTheme('linux');
+          showToast('Switched to Linux UI: Techy & Punchy Hacker Terminal', 'info');
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const toggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
