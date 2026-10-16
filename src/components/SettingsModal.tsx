@@ -112,10 +112,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 backdrop-blur-xs p-4 select-none">
-      <div className="bg-white dark:bg-[#090d16] border border-slate-300 dark:border-slate-800 rounded w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transition-colors">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 select-none">
+      <div className="glass-surface border border-slate-300 dark:border-slate-800 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transition-colors">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-3.5 border-b border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-[#0d1424]">
+        <div className="flex items-center justify-between px-6 py-3.5 border-b border-black/5 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md">
           <div className="flex items-center gap-2.5">
             <div className="h-7 w-7 rounded bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center font-bold text-xs">
               <Sliders className="h-4 w-4" />
@@ -138,7 +138,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         {/* Tactical Sub-Navigation Tabs */}
-        <div className="flex items-center px-6 border-b border-slate-200 dark:border-slate-800 bg-slate-100/60 dark:bg-[#070b14] overflow-x-auto gap-2 py-2">
+        <div className="flex items-center px-6 border-b border-black/5 dark:border-white/10 bg-white/30 dark:bg-black/20 backdrop-blur-md overflow-x-auto gap-2 py-2">
           <button
             onClick={() => setActiveTab('strategy')}
             className={`btn-brute px-3 py-1.5 rounded text-[11px] font-mono font-extrabold uppercase tracking-wider cursor-pointer transition-colors ${
@@ -661,7 +661,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-3.5 border-t border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-[#0d1424]">
+        <div className="flex items-center justify-between px-6 py-3.5 border-t border-black/5 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md">
           <button
             onClick={handleReset}
             className="btn-brute flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-mono font-bold transition-colors cursor-pointer"

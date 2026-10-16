@@ -368,7 +368,25 @@ export const App: React.FC = () => {
   const hasHistory = journal.some(j => j.status === 'applied');
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans select-none transition-colors">
+    <div className={`min-h-screen w-full ${
+      osTheme === 'mac'
+        ? 'bg-[#eef2f8]/70 dark:bg-[#070a14]/80 text-slate-900 dark:text-slate-100'
+        : 'bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100'
+    } flex flex-col font-sans select-none transition-colors relative overflow-x-hidden`}>
+      {/* macOS Liquid Glass Chromatic Aurora Underlay */}
+      {osTheme === 'mac' && (
+        <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
+          {/* Top-Left Azure & Indigo Glow Orb */}
+          <div className="absolute -top-36 -left-36 w-[680px] h-[680px] rounded-full bg-gradient-to-br from-indigo-500/25 via-sky-400/20 to-transparent blur-[110px] dark:from-indigo-600/35 dark:via-sky-500/20" />
+          {/* Top-Right Fuchsia & Violet Aurora Orb */}
+          <div className="absolute top-[8%] -right-36 w-[720px] h-[720px] rounded-full bg-gradient-to-bl from-fuchsia-500/20 via-purple-500/20 to-transparent blur-[120px] dark:from-purple-700/30 dark:via-fuchsia-600/20" />
+          {/* Bottom-Center Emerald & Teal Wave Orb */}
+          <div className="absolute -bottom-36 left-[20%] w-[780px] h-[780px] rounded-full bg-gradient-to-tr from-emerald-400/22 via-teal-500/18 to-transparent blur-[130px] dark:from-emerald-500/25 dark:via-teal-600/20" />
+          {/* Ambient Center Blue Shimmer */}
+          <div className="absolute top-[40%] right-[30%] w-[520px] h-[520px] rounded-full bg-gradient-to-r from-blue-400/12 to-indigo-400/12 blur-[100px] dark:from-blue-600/18 dark:to-indigo-700/18" />
+        </div>
+      )}
+
       {/* Toast Notification */}
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-3 duration-200">
@@ -412,7 +430,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Full-Width Content Container */}
-      <main className="flex-1 w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-5 flex flex-col space-y-5">
+      <main className="relative z-10 flex-1 w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-5 flex flex-col space-y-5">
         {/* Top 4 Metrics Cards */}
         <StatsCards plan={plan} files={files} />
 
@@ -434,7 +452,7 @@ export const App: React.FC = () => {
           osTheme === 'linux'
             ? 'border-emerald-600/40 bg-black/25 p-1.5 rounded-none font-mono'
             : osTheme === 'mac'
-            ? 'border-black/5 dark:border-white/10 pb-3'
+            ? 'border-white/20 dark:border-white/10 pb-3 bg-white/20 dark:bg-white/5 backdrop-blur-xl p-1.5 rounded-full'
             : 'border-slate-200 dark:border-slate-800/80 pb-2.5 font-mono'
         } overflow-x-auto`}>
           <button
@@ -445,7 +463,11 @@ export const App: React.FC = () => {
               activeTab === 'plan'
                 ? osTheme === 'linux'
                   ? 'bg-emerald-500 text-black border-emerald-400 font-mono shadow-xs'
+                  : osTheme === 'mac'
+                  ? 'bg-[#0071e3] text-white shadow-md shadow-blue-500/30 border border-blue-400/40'
                   : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
+                : osTheme === 'mac'
+                ? 'text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white bg-white/35 dark:bg-white/10 hover:bg-white/60 dark:hover:bg-white/20 border border-white/50 dark:border-white/10 backdrop-blur-md'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-850/70 border border-slate-300 dark:border-slate-700/70'
             }`}
           >
@@ -468,7 +490,11 @@ export const App: React.FC = () => {
               activeTab === 'decay'
                 ? osTheme === 'linux'
                   ? 'bg-amber-500 text-black border-amber-400 font-mono shadow-xs'
+                  : osTheme === 'mac'
+                  ? 'bg-[#0071e3] text-white shadow-md shadow-blue-500/30 border border-blue-400/40'
                   : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
+                : osTheme === 'mac'
+                ? 'text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white bg-white/35 dark:bg-white/10 hover:bg-white/60 dark:hover:bg-white/20 border border-white/50 dark:border-white/10 backdrop-blur-md'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-850/70 border border-slate-300 dark:border-slate-700/70'
             }`}
           >
@@ -491,7 +517,11 @@ export const App: React.FC = () => {
               activeTab === 'duplicates'
                 ? osTheme === 'linux'
                   ? 'bg-rose-500 text-white border-rose-400 font-mono shadow-xs'
+                  : osTheme === 'mac'
+                  ? 'bg-[#0071e3] text-white shadow-md shadow-blue-500/30 border border-blue-400/40'
                   : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
+                : osTheme === 'mac'
+                ? 'text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white bg-white/35 dark:bg-white/10 hover:bg-white/60 dark:hover:bg-white/20 border border-white/50 dark:border-white/10 backdrop-blur-md'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-850/70 border border-slate-300 dark:border-slate-700/70'
             }`}
           >
@@ -514,7 +544,11 @@ export const App: React.FC = () => {
               activeTab === 'heavy'
                 ? osTheme === 'linux'
                   ? 'bg-cyan-500 text-black border-cyan-400 font-mono shadow-xs'
+                  : osTheme === 'mac'
+                  ? 'bg-[#0071e3] text-white shadow-md shadow-blue-500/30 border border-blue-400/40'
                   : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
+                : osTheme === 'mac'
+                ? 'text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white bg-white/35 dark:bg-white/10 hover:bg-white/60 dark:hover:bg-white/20 border border-white/50 dark:border-white/10 backdrop-blur-md'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-850/70 border border-slate-300 dark:border-slate-700/70'
             }`}
           >
@@ -537,7 +571,11 @@ export const App: React.FC = () => {
               activeTab === 'journal'
                 ? osTheme === 'linux'
                   ? 'bg-slate-700 text-emerald-300 border-slate-500 font-mono shadow-xs'
+                  : osTheme === 'mac'
+                  ? 'bg-[#0071e3] text-white shadow-md shadow-blue-500/30 border border-blue-400/40'
                   : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
+                : osTheme === 'mac'
+                ? 'text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white bg-white/35 dark:bg-white/10 hover:bg-white/60 dark:hover:bg-white/20 border border-white/50 dark:border-white/10 backdrop-blur-md'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-850/70 border border-slate-300 dark:border-slate-700/70'
             }`}
           >

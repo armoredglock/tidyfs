@@ -79,10 +79,10 @@ echo "[SUCCESS] TidyFS installed at \${BIN_DIR}/tidyfs"
 "\${BIN_DIR}/tidyfs" &`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 select-none">
-      <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transition-colors">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 select-none">
+      <div className="glass-surface border border-slate-300 dark:border-slate-700/80 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden transition-colors">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850">
+        <div className="flex items-center justify-between px-6 py-4.5 border-b border-black/5 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md">
           <div className="flex items-center gap-2.5">
             <div className="h-8 w-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
               <Download className="h-4 w-4" />
@@ -259,13 +259,13 @@ echo "[SUCCESS] TidyFS installed at \${BIN_DIR}/tidyfs"
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-black/5 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md">
           <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
             Downloader scripts are located in <code className="font-mono font-bold text-slate-700 dark:text-slate-300">downloaders/</code>
           </span>
           <button
             onClick={onClose}
-            className="btn-normal px-4 py-2 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer shadow-xs"
+            className="btn-normal px-4 py-2 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-white/10 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer shadow-xs"
           >
             Close
           </button>
