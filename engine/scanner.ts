@@ -4,8 +4,15 @@ import { ScannedFile, TidySettings } from './types.js';
 import { classifyFile } from './classifier.js';
 import { calculateDecay } from './decay.js';
 import { analyzeThreat } from './threatScanner.js';
+import { validateMonitoredDirectory, isProtectedSystemFile, PRESERVED_SYSTEM_EXTENSIONS } from './safety.js';
 
 export function scanFolder(folderPath: string, settings: TidySettings): ScannedFile[] {
+  // 1. Strict Operating System & Drive Safety Guardrail
+  const safety = validateMonitoredDirectory(folderPath);
+  if (!safety.safe) {
+    throw new Error(`[SAFETY_BLOCKED] ${safety.reason}`);
+  }
+
   if (!fs.existsSync(folderPath)) {
     throw new Error(`Directory does not exist: ${folderPath}`);
   }
@@ -22,10 +29,10 @@ export function scanFolder(folderPath: string, settings: TidySettings): ScannedF
     const filePath = path.join(folderPath, fileName);
     const ext = path.extname(fileName).toLowerCase();
 
-    // Skip hidden files, system files, and ignored files
+    // Skip hidden files, system files, and protected files
     if (fileName.startsWith('.') || fileName.startsWith('~$')) continue;
-    if (fileName === 'desktop.ini' || fileName === 'Thumbs.db' || fileName === '.DS_Store') continue;
-    if (fileName === '.tidyfs-journal.json') continue;
+    if (isProtectedSystemFile(fileName)) continue;
+    if (PRESERVED_SYSTEM_EXTENSIONS.has(ext)) continue;
     if (settings.ignoredExtensions.includes(ext)) continue;
     if (settings.ignoredPatterns.some(p => fileName.toLowerCase().includes(p.toLowerCase()))) continue;
 

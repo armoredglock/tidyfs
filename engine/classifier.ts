@@ -5,26 +5,30 @@ import { Category, CustomRule } from './types.js';
 const FINANCE_KEYWORDS = [
   'invoice', 'receipt', 'tax', 'bill', 'statement', 'salary', 'payroll',
   'gst', 'vat', 'expense', 'payment', 'payslip', 'bank', 'finances', 'crypto',
-  '1099', 'w2', 'ledger', 'audit', 'dividend', 'wire', 'reimbursement', 'remittance',
-  'quotation', 'invoice_', 'receipt_'
+  '1099', 'w2', 'w-2', 'w9', 'w-9', 'ledger', 'audit', 'dividend', 'wire',
+  'reimbursement', 'remittance', 'quotation', 'deposit', 'withdrawal',
+  'balance_sheet', 'pnl', 'profit_loss', 'accounting', 'pricing', 'paycheck'
 ];
 
 const TRAVEL_KEYWORDS = [
   'boarding', 'flight', 'ticket', 'hotel', 'itinerary', 'booking', 
   'visa', 'passport', 'airbnb', 'boardingpass', 'airline', 'transit',
-  'train', 'bus', 'reservation', 'confirmation', 'trip', 'voyage'
+  'train', 'bus', 'reservation', 'confirmation', 'trip', 'voyage',
+  'travel', 'expedia', 'tripadvisor', 'booking_com'
 ];
 
 const LEGAL_KEYWORDS = [
   'contract', 'agreement', 'nda', 'terms', 'lease', 'deed', 'policy',
   'compliance', 'license', 'addendum', 'settlement', 'bylaws', 'resolution',
-  'trademark', 'patent', 'waiver', 'affidavit', 'power_of_attorney'
+  'trademark', 'patent', 'waiver', 'affidavit', 'power_of_attorney',
+  'court', 'memorandum', 'consent', 'arbitration', 'privacy_policy'
 ];
 
 const ACADEMIC_KEYWORDS = [
   'thesis', 'dissertation', 'syllabus', 'assignment', 'homework', 'lecture',
   'coursework', 'curriculum', 'quiz', 'exam', 'midterm', 'final_exam',
-  'study_guide', 'lab_report', 'essay', 'bibliography', 'citation', 'abstract'
+  'study_guide', 'lab_report', 'essay', 'bibliography', 'citation', 'abstract',
+  'research_paper', 'transcript', 'degree', 'certificate', 'diploma'
 ];
 
 const INSTALLER_EXTENSIONS = new Set([
@@ -81,8 +85,13 @@ function matchesKeyword(text: string, keywords: string[]): boolean {
   const words = normalized.split(/\s+/);
   return keywords.some(kw => {
     if (normalized.includes(kw)) {
-      // Check as separate token or prefix/suffix with underscore/hyphen
-      return words.includes(kw) || text.toLowerCase().includes(`_${kw}`) || text.toLowerCase().includes(`${kw}_`) || text.toLowerCase().includes(`-${kw}`) || text.toLowerCase().includes(`${kw}-`);
+      return (
+        words.includes(kw) ||
+        text.toLowerCase().includes(`_${kw}`) ||
+        text.toLowerCase().includes(`${kw}_`) ||
+        text.toLowerCase().includes(`-${kw}`) ||
+        text.toLowerCase().includes(`${kw}-`)
+      );
     }
     return false;
   });
@@ -99,7 +108,6 @@ export function evaluateCustomRules(
   if (!customRules || customRules.length === 0) return null;
 
   const ext = getCompoundExtension(fileName);
-  const nameWithoutExt = fileName.slice(0, fileName.length - ext.length).toLowerCase();
 
   for (const rule of customRules) {
     if (!rule.enabled) continue;
@@ -162,30 +170,64 @@ export function evaluateCustomRules(
 export function classifyFile(filePath: string): { category: Category; isInstallerOrArchive: boolean } {
   const fileName = path.basename(filePath);
   const ext = getCompoundExtension(fileName);
+  const upperBase = fileName.toUpperCase();
 
-  // 1. Installers check (Highest priority for system hygiene)
+  // 1. Handle common extensionless files
+  if (!ext || ext === '') {
+    if (upperBase === 'LICENSE' || upperBase === 'COPYING' || upperBase === 'PATENTS') {
+      return { category: 'Legal', isInstallerOrArchive: false };
+    }
+    if (upperBase === 'DOCKERFILE' || upperBase === 'MAKEFILE' || upperBase === 'PROCFILE' || upperBase === 'GEMFILE') {
+      return { category: 'Code', isInstallerOrArchive: false };
+    }
+    if (upperBase === 'README') {
+      return { category: 'Documents', isInstallerOrArchive: false };
+    }
+  }
+
+  // 2. Installers check (Highest priority for system hygiene)
   if (INSTALLER_EXTENSIONS.has(ext)) {
     return { category: 'Installers', isInstallerOrArchive: true };
   }
 
-  // 2. Archives check
+  // 3. Archives check
   if (ARCHIVE_EXTENSIONS.has(ext)) {
     return { category: 'Archives', isInstallerOrArchive: true };
   }
 
-  // 3. Raw Creative & Design formats
+  // 4. Code & Engineering formats take precedence over keyword matches
+  // (e.g. tax_calculator.py belongs to Code, not Finances)
+  if (CODE_EXTENSIONS.has(ext)) {
+    return { category: 'Code', isInstallerOrArchive: false };
+  }
+
+  // 5. Raw Creative & Design formats
   if (DESIGN_EXTENSIONS.has(ext)) {
     return { category: 'Design', isInstallerOrArchive: false };
   }
 
-  // 4. Semantic contextual analysis for documents/media
-  const isDocumentOrImage = DOCUMENT_EXTENSIONS.has(ext) || ext === '.png' || ext === '.jpg' || ext === '.jpeg';
+  // 6. Specialized domain extensions
+  if (ext === '.ofx' || ext === '.qfx' || ext === '.qbo') {
+    return { category: 'Finances', isInstallerOrArchive: false };
+  }
+  if (ext === '.pkpass' || ext === '.gpx' || ext === '.kml') {
+    return { category: 'Travel', isInstallerOrArchive: false };
+  }
 
-  if (isDocumentOrImage) {
+  // 7. Semantic contextual analysis for documents and receipt/ticket image formats
+  const isDocumentOrReceipt =
+    DOCUMENT_EXTENSIONS.has(ext) ||
+    ext === '.png' ||
+    ext === '.jpg' ||
+    ext === '.jpeg' ||
+    ext === '.webp' ||
+    ext === '.heic';
+
+  if (isDocumentOrReceipt) {
     if (matchesKeyword(fileName, FINANCE_KEYWORDS)) {
       return { category: 'Finances', isInstallerOrArchive: false };
     }
-    if (matchesKeyword(fileName, TRAVEL_KEYWORDS) || ext === '.pkpass') {
+    if (matchesKeyword(fileName, TRAVEL_KEYWORDS)) {
       return { category: 'Travel', isInstallerOrArchive: false };
     }
     if (matchesKeyword(fileName, LEGAL_KEYWORDS)) {
@@ -196,17 +238,12 @@ export function classifyFile(filePath: string): { category: Category; isInstalle
     }
   }
 
-  // 5. Code & Engineering
-  if (CODE_EXTENSIONS.has(ext)) {
-    return { category: 'Code', isInstallerOrArchive: false };
-  }
-
-  // 6. Media (Audio, Video, Images)
+  // 8. General Media (Audio, Video, Images)
   if (MEDIA_EXTENSIONS.has(ext)) {
     return { category: 'Media', isInstallerOrArchive: false };
   }
 
-  // 7. General Documents
+  // 9. General Documents
   if (DOCUMENT_EXTENSIONS.has(ext)) {
     return { category: 'Documents', isInstallerOrArchive: false };
   }

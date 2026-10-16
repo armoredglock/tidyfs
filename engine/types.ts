@@ -181,8 +181,8 @@ export const DEFAULT_SETTINGS: TidySettings = {
   enableDeduplicate: true,
   heavyFileThresholdMB: 100,
   autoSchedule: 'manual',
-  ignoredExtensions: ['.ini', '.sys', '.tmp', '.crdownload', '.part'],
-  ignoredPatterns: ['node_modules', '.git', '.tidyfs-decay'],
+  ignoredExtensions: ['.ini', '.sys', '.tmp', '.crdownload', '.part', '.lnk', '.url', '.dll'],
+  ignoredPatterns: ['node_modules', '.git', '.tidyfs-decay', 'tidyfs-quarantine', 'tidyfs-recycled', '$recycle.bin', 'system volume information'],
   categoryFolders: {
     Finances: 'Finances',
     Travel: 'Travel',

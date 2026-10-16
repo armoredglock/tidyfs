@@ -112,7 +112,15 @@ export const App: React.FC = () => {
         return;
       }
     } catch (err: unknown) {
-      showToast(`Scan issue: ${(err as Error).message}`, 'error');
+      const msg = (err as Error).message || '';
+      if (msg.includes('SAFETY_BLOCKED')) {
+        const cleanMsg = msg.replace(/.*\[SAFETY_BLOCKED\]\s*/, '');
+        showToast(`SAFETY GUARD: ${cleanMsg}`, 'error');
+        setPlan(null);
+        setFiles([]);
+      } else {
+        showToast(`Scan issue: ${msg}`, 'error');
+      }
     } finally {
       setIsScanning(false);
     }

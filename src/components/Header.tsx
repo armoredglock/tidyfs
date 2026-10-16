@@ -77,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({
             className="truncate text-xs font-mono font-bold text-slate-800 dark:text-slate-200 flex-1 select-all"
             title={currentFolder}
           >
-            {currentFolder || 'C:\\Users\\User\\Downloads'}
+            {currentFolder || 'Select a folder to organize...'}
           </span>
 
           <div className="flex items-center gap-1 shrink-0 font-mono">

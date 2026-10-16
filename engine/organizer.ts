@@ -5,6 +5,7 @@ import { scanFolder } from './scanner.js';
 import { detectDuplicates } from './dedup.js';
 import { evaluateCustomRules, getCompoundExtension } from './classifier.js';
 import { JournalManager } from './journal.js';
+import { validateMonitoredDirectory } from './safety.js';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -89,6 +90,11 @@ function resolveStrategyPath(
 }
 
 export async function createTidyPlan(targetFolder: string, settings: TidySettings): Promise<TidyPlan> {
+  const safety = validateMonitoredDirectory(targetFolder);
+  if (!safety.safe) {
+    throw new Error(`[SAFETY_BLOCKED] ${safety.reason}`);
+  }
+
   const files = scanFolder(targetFolder, settings);
   const duplicates = settings.enableDeduplicate 
     ? await detectDuplicates(files, settings) 
@@ -255,6 +261,15 @@ export function executeTidyPlan(
   plan: TidyPlan,
   dryRun = false
 ): { success: boolean; movedCount: number; errors: string[] } {
+  const safety = validateMonitoredDirectory(plan.targetFolder);
+  if (!safety.safe) {
+    return {
+      success: false,
+      movedCount: 0,
+      errors: [`[SAFETY_BLOCKED] ${safety.reason}`]
+    };
+  }
+
   if (dryRun) {
     return {
       success: true,

@@ -5,6 +5,7 @@ import { DEFAULT_SETTINGS, TidySettings, TidyPlan } from '../engine/types.js';
 import { scanFolder } from '../engine/scanner.js';
 import { createTidyPlan, executeTidyPlan } from '../engine/organizer.js';
 import { JournalManager } from '../engine/journal.js';
+import { validateMonitoredDirectory } from '../engine/safety.js';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -102,7 +103,19 @@ function setupIPCHandlers(): void {
       title: 'Select Folder for TidyFS to Monitor'
     });
     if (result.canceled || result.filePaths.length === 0) return null;
-    return result.filePaths[0];
+    const chosenPath = result.filePaths[0];
+
+    const safety = validateMonitoredDirectory(chosenPath);
+    if (!safety.safe) {
+      await dialog.showMessageBox(mainWindow, {
+        type: 'warning',
+        title: 'Safety Interceptor: Protected Directory',
+        message: 'This Directory Cannot Be Organized',
+        detail: safety.reason
+      });
+      return null;
+    }
+    return chosenPath;
   });
 
   ipcMain.handle('app:getDefaultDownloads', () => {
@@ -134,14 +147,30 @@ function setupIPCHandlers(): void {
   });
 
   ipcMain.handle('tidy:scan', (_event, folder: string, settings: TidySettings) => {
+    const safety = validateMonitoredDirectory(folder);
+    if (!safety.safe) {
+      throw new Error(`[SAFETY_BLOCKED] ${safety.reason}`);
+    }
     return scanFolder(folder, settings);
   });
 
   ipcMain.handle('tidy:createPlan', async (_event, folder: string, settings: TidySettings) => {
+    const safety = validateMonitoredDirectory(folder);
+    if (!safety.safe) {
+      throw new Error(`[SAFETY_BLOCKED] ${safety.reason}`);
+    }
     return await createTidyPlan(folder, settings);
   });
 
   ipcMain.handle('tidy:executePlan', (_event, plan: TidyPlan, dryRun: boolean) => {
+    const safety = validateMonitoredDirectory(plan.targetFolder);
+    if (!safety.safe) {
+      return {
+        success: false,
+        movedCount: 0,
+        errors: [`[SAFETY_BLOCKED] ${safety.reason}`]
+      };
+    }
     return executeTidyPlan(plan, dryRun);
   });
 
