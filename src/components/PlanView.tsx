@@ -223,26 +223,26 @@ export const PlanView: React.FC<PlanViewProps> = ({
       ) : null}
 
       {/* Functional Filter & Search Bar */}
-      <div className="card-brute p-3 flex flex-col md:flex-row items-center justify-between gap-3 transition-colors">
+      <div className="card-brute p-3.5 flex flex-col md:flex-row items-center justify-between gap-3 transition-colors">
         {/* Live Search Input */}
-        <div className="relative w-full md:w-80">
-          <Search className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400 absolute left-3 top-2.5" />
+        <div className="relative w-full md:w-96">
+          <Search className="h-4 w-4 text-slate-500 dark:text-slate-400 absolute left-3 top-2.5" />
           <input
             type="text"
             placeholder="FILTER FILES // [name, ext, rule]..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-[#0c1222] border border-slate-300 dark:border-slate-700 rounded text-xs font-mono font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-slate-800 dark:focus:border-slate-300"
+            className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-[#0c1222] border border-slate-300 dark:border-slate-700 rounded text-xs sm:text-[13px] font-mono font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-slate-800 dark:focus:border-slate-300"
           />
         </div>
 
         {/* Category Pill Filters */}
-        <div className="flex items-center gap-1 flex-wrap text-xs font-mono">
+        <div className="flex items-center gap-1.5 flex-wrap text-xs font-mono">
           {(['all', 'Finances', 'Travel', 'Legal', 'Academic', 'Media', 'Design', 'Documents', 'Code', 'Archives', 'Installers'] as const).map(cat => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-2 py-0.5 rounded text-[10px] font-extrabold transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded text-[11px] font-extrabold transition-all cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-2xs'
                   : 'bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700'
@@ -255,11 +255,11 @@ export const PlanView: React.FC<PlanViewProps> = ({
 
         {/* Sort Dropdown */}
         <div className="flex items-center gap-1.5 shrink-0 font-mono">
-          <ArrowUpDown className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+          <ArrowUpDown className="h-4 w-4 text-slate-500 dark:text-slate-400" />
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as SortKey)}
-            className="bg-slate-50 dark:bg-[#0c1222] border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-xs font-mono font-extrabold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
+            className="bg-slate-50 dark:bg-[#0c1222] border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1.5 text-xs sm:text-[13px] font-mono font-extrabold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
           >
             <option value="size_desc">SORT: SIZE (DESC)</option>
             <option value="size_asc">SORT: SIZE (ASC)</option>
@@ -271,7 +271,7 @@ export const PlanView: React.FC<PlanViewProps> = ({
       </div>
 
       {/* Action Control Bar */}
-      <div className="card-brute p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors bg-slate-50/50 dark:bg-slate-850/50">
+      <div className="card-brute p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors bg-slate-50/50 dark:bg-slate-850/50">
         <div className="flex items-center gap-3">
           <input
             type="checkbox"
@@ -279,29 +279,29 @@ export const PlanView: React.FC<PlanViewProps> = ({
             onChange={() => toggleAll(filteredActions)}
             className="rounded-none border-slate-400 dark:border-slate-600 text-slate-900 focus:ring-0 h-4 w-4 cursor-pointer"
           />
-          <span className="telemetry-tag text-slate-800 dark:text-slate-200">
+          <span className="telemetry-tag text-slate-800 dark:text-slate-200 text-xs sm:text-[13px]">
             {selectedActions.length} / {filteredActions.length} OPERATIONS SELECTED
           </span>
 
           <button
             onClick={() => setViewState('success')}
-            className="text-[11px] font-mono font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white underline ml-2 cursor-pointer uppercase"
+            className="text-xs font-mono font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white underline ml-2 cursor-pointer uppercase"
           >
             [SHOW SUCCESS STATE]
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {/* Dry Run Switch */}
-          <div className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-2.5 py-1 rounded">
-            <span className="text-[11px] font-mono font-extrabold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 uppercase">
-              <Eye className="h-3 w-3 text-slate-500 dark:text-slate-400" />
+          <div className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded">
+            <span className="text-xs font-mono font-extrabold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 uppercase">
+              <Eye className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
               DRY RUN:
             </span>
             <button
               onClick={() => setDryRun(!dryRun)}
               type="button"
-              className={`btn-brute text-[10px] font-mono font-black px-1.5 py-0.2 rounded border cursor-pointer ${
+              className={`btn-brute text-[11px] font-mono font-black px-2 py-0.5 rounded border cursor-pointer ${
                 dryRun
                   ? 'bg-indigo-600 text-white border-indigo-700'
                   : 'bg-rose-600 text-white border-rose-700'
@@ -315,37 +315,37 @@ export const PlanView: React.FC<PlanViewProps> = ({
           <button
             onClick={() => onExecute(selectedActions)}
             disabled={isExecuting || selectedActions.length === 0}
-            className={`btn-brute flex items-center gap-1.5 px-4 py-1.5 rounded font-black text-xs uppercase tracking-wider cursor-pointer disabled:opacity-40 border transition-all ${
+            className={`btn-brute flex items-center gap-2 px-5 py-2 rounded font-black text-xs sm:text-[13px] uppercase tracking-wider cursor-pointer disabled:opacity-40 border transition-all ${
               dryRun
                 ? 'bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 border-slate-900 dark:border-white shadow-2xs'
                 : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 border-emerald-600 dark:border-emerald-400 font-black shadow-md glow-emerald'
             }`}
           >
-            {dryRun ? <Eye className="h-3.5 w-3.5 text-emerald-400 dark:text-emerald-600" /> : <Sparkles className="h-3.5 w-3.5 text-slate-950" />}
+            {dryRun ? <Eye className="h-4 w-4 text-emerald-400 dark:text-emerald-600" /> : <Sparkles className="h-4 w-4 text-slate-950" />}
             {isExecuting ? 'PROCESSING...' : dryRun ? 'PREVIEW EXECUTION' : 'EXECUTE LIVE'}
           </button>
         </div>
       </div>
 
       {/* Operations Table */}
-      <div className="card-brute overflow-hidden transition-colors flex-1 min-h-[380px] max-h-[58vh] flex flex-col border border-slate-300 dark:border-slate-800">
+      <div className="card-brute overflow-hidden transition-colors flex-1 min-h-[380px] max-h-[60vh] flex flex-col border border-slate-300 dark:border-slate-800">
         <div className="overflow-x-auto overflow-y-auto flex-1">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-100 dark:bg-slate-850 sticky top-0 z-10 border-b border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono text-[10px] font-black">
+          <table className="w-full text-left text-[13px]">
+            <thead className="bg-slate-100 dark:bg-slate-850 sticky top-0 z-10 border-b border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono text-xs font-black">
               <tr>
-                <th className="p-2.5 w-8 text-center"></th>
-                <th className="p-2.5">FILE IDENTIFIER</th>
-                <th className="p-2.5">CATEGORY</th>
-                <th className="p-2.5">ROUTING DESTINATION</th>
-                <th className="p-2.5">SIZE</th>
-                <th className="p-2.5">CLASSIFICATION REASON</th>
-                <th className="p-2.5 w-16 text-center">ACTIONS</th>
+                <th className="p-3 w-10 text-center"></th>
+                <th className="p-3">FILE IDENTIFIER</th>
+                <th className="p-3">CATEGORY</th>
+                <th className="p-3">ROUTING DESTINATION</th>
+                <th className="p-3">SIZE</th>
+                <th className="p-3">CLASSIFICATION REASON</th>
+                <th className="p-3 w-20 text-center">ACTIONS</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800 font-semibold text-slate-800 dark:text-slate-200 font-mono">
               {filteredActions.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-16 text-center text-slate-500 dark:text-slate-400 font-bold font-mono">
+                  <td colSpan={7} className="p-16 text-center text-slate-500 dark:text-slate-400 font-bold font-mono text-sm">
                     NO ENTRIES MATCHING ACTIVE FILTER PARAMETERS.
                   </td>
                 </tr>
@@ -357,34 +357,34 @@ export const PlanView: React.FC<PlanViewProps> = ({
                       !selectedIds.has(action.id) ? 'opacity-35' : ''
                     }`}
                   >
-                    <td className="p-2.5 text-center">
+                    <td className="p-3 text-center">
                       <input
                         type="checkbox"
                         checked={selectedIds.has(action.id)}
                         onChange={() => toggleSelect(action.id)}
-                        className="rounded-none border-slate-400 dark:border-slate-600 text-emerald-600 focus:ring-0 h-3.5 w-3.5 cursor-pointer"
+                        className="rounded-none border-slate-400 dark:border-slate-600 text-emerald-600 focus:ring-0 h-4 w-4 cursor-pointer"
                       />
                     </td>
-                    <td className="p-2.5 text-slate-900 dark:text-white flex items-center gap-2">
-                      <div className="h-5 w-5 rounded-none bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center shrink-0 text-slate-600 dark:text-slate-400">
-                        <FileText className="h-3 w-3" />
+                    <td className="p-3 text-slate-900 dark:text-white flex items-center gap-2.5">
+                      <div className="h-6 w-6 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center shrink-0 text-slate-600 dark:text-slate-400">
+                        <FileText className="h-3.5 w-3.5" />
                       </div>
-                      <span className="truncate max-w-xs font-bold text-xs" title={action.fileName}>
+                      <span className="truncate max-w-sm sm:max-w-md font-bold text-[13px]" title={action.fileName}>
                         {action.fileName}
                       </span>
                     </td>
-                    <td className="p-2.5">
+                    <td className="p-3">
                       <span
-                        className={`px-1.5 py-0.2 rounded text-[10px] font-black border uppercase ${
+                        className={`px-2 py-0.5 rounded text-[11px] font-black border uppercase ${
                           CATEGORY_TINTS[action.category]
                         }`}
                       >
                         {action.category}
                       </span>
                     </td>
-                    <td className="p-2.5">
-                      <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-200 font-bold">
-                        <span className={`text-[9px] font-black px-1.5 py-0.2 rounded uppercase ${
+                    <td className="p-3">
+                      <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-bold">
+                        <span className={`text-[10px] font-black px-2 py-0.5 rounded uppercase ${
                           action.type === 'quarantine'
                             ? 'bg-rose-600 text-white border border-rose-700'
                             : action.type === 'trash'
@@ -395,33 +395,33 @@ export const PlanView: React.FC<PlanViewProps> = ({
                         }`}>
                           {action.type === 'quarantine' ? 'QUARANTINE' : action.type === 'trash' ? 'RECYCLE' : action.type === 'delete_duplicate' ? 'DEDUP' : 'MOVE'}
                         </span>
-                        <ArrowRight className="h-3 w-3 text-slate-400 shrink-0" />
-                        <span className="text-emerald-700 dark:text-emerald-400 truncate max-w-xs text-xs font-bold" title={action.targetPath}>
+                        <ArrowRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                        <span className="text-emerald-700 dark:text-emerald-400 truncate max-w-sm text-[13px] font-bold" title={action.targetPath}>
                           {action.targetPath.split(/[\\/]/).slice(-2).join('/')}
                         </span>
                       </div>
                     </td>
-                    <td className="p-2.5 text-slate-700 dark:text-slate-300 font-bold text-xs">
+                    <td className="p-3 text-slate-700 dark:text-slate-300 font-bold text-[13px]">
                       {formatBytes(action.fileSize)}
                     </td>
-                    <td className="p-2.5 text-slate-600 dark:text-slate-400 truncate max-w-xs text-xs font-medium" title={action.reason}>
+                    <td className="p-3 text-slate-600 dark:text-slate-400 truncate max-w-sm text-xs sm:text-[13px] font-medium" title={action.reason}>
                       {action.reason}
                     </td>
-                    <td className="p-2.5 text-center">
-                      <div className="flex items-center justify-center gap-1">
+                    <td className="p-3 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
                         <button
                           onClick={() => onRevealFile(action.sourcePath)}
-                          className="btn-brute text-slate-400 hover:text-slate-900 dark:hover:text-white p-1"
+                          className="btn-brute text-slate-400 hover:text-slate-900 dark:hover:text-white p-1.5 cursor-pointer"
                           title="Reveal in Explorer"
                         >
-                          <ExternalLink className="h-3.5 w-3.5" />
+                          <ExternalLink className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => toggleIgnore(action.id)}
-                          className="btn-brute text-slate-400 hover:text-rose-600 p-1"
+                          className="btn-brute text-slate-400 hover:text-rose-600 p-1.5 cursor-pointer"
                           title="Ignore / Whitelist file"
                         >
-                          <Ban className="h-3.5 w-3.5" />
+                          <Ban className="h-4 w-4" />
                         </button>
                       </div>
                     </td>

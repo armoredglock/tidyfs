@@ -49,43 +49,43 @@ export const DuplicatesView: React.FC<DuplicatesViewProps> = ({ files, onRevealF
       </div>
 
       {/* Duplicates Table */}
-      <div className="card-normal overflow-hidden transition-colors flex-1 min-h-[380px] max-h-[58vh] flex flex-col">
+      <div className="card-normal overflow-hidden transition-colors flex-1 min-h-[380px] max-h-[60vh] flex flex-col">
         <div className="overflow-x-auto overflow-y-auto flex-1">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-slate-800/90 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px] font-extrabold">
+          <table className="w-full text-left text-xs sm:text-[13px]">
+            <thead className="bg-slate-50 dark:bg-slate-800/90 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase tracking-wider text-xs font-black">
               <tr>
-                <th className="p-3">Duplicate File</th>
-                <th className="p-3">Original Reference</th>
-                <th className="p-3">Wasted Space</th>
-                <th className="p-3 w-12 text-center"></th>
+                <th className="p-3.5">Duplicate File</th>
+                <th className="p-3.5">Original Reference</th>
+                <th className="p-3.5">Wasted Space</th>
+                <th className="p-3.5 w-14 text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-semibold text-slate-800 dark:text-slate-200">
               {duplicateFiles.map(file => (
                 <tr key={file.path} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                  <td className="p-3 text-rose-800 dark:text-rose-300 font-mono font-bold flex items-center gap-2">
+                  <td className="p-3.5 text-rose-800 dark:text-rose-300 font-mono font-bold flex items-center gap-2.5">
                     <div className="h-6 w-6 rounded bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 flex items-center justify-center shrink-0">
                       <Copy className="h-3.5 w-3.5" />
                     </div>
-                    <span className="truncate max-w-xs" title={file.name}>
+                    <span className="truncate max-w-sm sm:max-w-md" title={file.name}>
                       {file.name}
                     </span>
                   </td>
-                  <td className="p-3 text-slate-600 dark:text-slate-400 font-mono font-medium">
-                    <span className="truncate max-w-xs block text-slate-800 dark:text-slate-200 font-bold" title={file.duplicateOf}>
+                  <td className="p-3.5 text-slate-600 dark:text-slate-400 font-mono font-medium">
+                    <span className="truncate max-w-sm sm:max-w-md block text-slate-800 dark:text-slate-200 font-bold" title={file.duplicateOf}>
                       {file.duplicateOf ? file.duplicateOf.split(/[\\/]/).pop() : 'Original reference'}
                     </span>
                   </td>
-                  <td className="p-3 text-rose-700 dark:text-rose-400 font-mono font-extrabold text-xs">
+                  <td className="p-3.5 text-rose-700 dark:text-rose-400 font-mono font-extrabold text-xs sm:text-[13px]">
                     {formatBytes(file.size)}
                   </td>
-                  <td className="p-3 text-center">
+                  <td className="p-3.5 text-center">
                     <button
                       onClick={() => onRevealFile(file.path)}
-                      className="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors p-1"
+                      className="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors p-1.5 cursor-pointer"
                       title="Reveal in File Explorer"
                     >
-                      <ExternalLink className="h-3.5 w-3.5" />
+                      <ExternalLink className="h-4 w-4" />
                     </button>
                   </td>
                 </tr>

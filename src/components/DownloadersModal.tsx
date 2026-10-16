@@ -105,37 +105,56 @@ echo "[SUCCESS] TidyFS installed at \${BIN_DIR}/tidyfs"
         </div>
 
         {/* Body */}
-        <div className="p-6 overflow-y-auto space-y-6 text-xs">
+        <div className="p-6 overflow-y-auto space-y-6 text-xs sm:text-[13px]">
           {/* Windows Platform Section */}
-          <div className="card-normal p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-3">
+          <div className="card-normal p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-3.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-900/50">
+                <span className="px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase tracking-wider bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-900/50">
                   Windows
                 </span>
-                <span className="font-extrabold text-sm text-slate-900 dark:text-white">
-                  Windows Setup (.exe) & Script (.bat)
+                <span className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                  PowerShell / Command Line & Setup Wizard (.exe)
                 </span>
               </div>
-              <span className="text-[11px] font-mono font-bold text-slate-500">v1.0.0 (x64)</span>
+              <span className="text-xs font-mono font-bold text-slate-500">v1.0.0 (x64)</span>
             </div>
 
             <p className="text-slate-600 dark:text-slate-300 font-semibold leading-relaxed">
-              Provides the full Windows NSIS installer wizard with desktop and Start Menu shortcuts, or double-click `.bat` script.
+              Install and launch TidyFS instantly using PowerShell or download the standalone NSIS setup wizard with full desktop integration.
             </p>
+
+            {/* Terminal One-Liner Box */}
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-mono font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                POWERSHELL TERMINAL COMMAND:
+              </span>
+              <div className="flex items-center justify-between gap-2 p-2.5 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-xs">
+                <code className="text-blue-700 dark:text-blue-300 truncate font-bold select-all">
+                  irm https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-windows.ps1 | iex
+                </code>
+                <button
+                  onClick={() => handleCopy('irm https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-windows.ps1 | iex', 'win-ps')}
+                  className="btn-normal flex items-center gap-1.5 px-3 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs cursor-pointer shrink-0 shadow-2xs"
+                >
+                  {copiedIndex === 'win-ps' ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copiedIndex === 'win-ps' ? 'Copied' : 'Copy Command'}
+                </button>
+              </div>
+            </div>
 
             <div className="flex items-center gap-2 flex-wrap pt-1">
               <button
                 onClick={() => handleDownloadFile('download-windows.bat', WINDOWS_BAT_SNIPPET)}
-                className="btn-normal flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs cursor-pointer shadow-2xs"
+                className="btn-normal flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-650 text-slate-800 dark:text-slate-200 font-extrabold text-xs border border-slate-300 dark:border-slate-600 cursor-pointer shadow-2xs"
               >
                 <Download className="h-3.5 w-3.5" />
                 Download Windows Script (.bat)
               </button>
 
-              <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded border border-slate-200 dark:border-slate-700 font-mono text-slate-700 dark:text-slate-300 flex-1 min-w-[280px]">
-                <span className="text-[11px] truncate flex-1">release\TidyFS Setup 1.0.0.exe</span>
-                <span className="text-[10px] font-extrabold px-1.5 py-0.2 bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 rounded">
+              <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded border border-slate-200 dark:border-slate-700 font-mono text-slate-700 dark:text-slate-300 flex-1 min-w-[280px]">
+                <span className="text-xs truncate flex-1 font-bold">release\TidyFS Setup 1.0.0.exe</span>
+                <span className="text-[10px] font-extrabold px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 rounded">
                   Built (84.7 MB)
                 </span>
               </div>
@@ -143,75 +162,97 @@ echo "[SUCCESS] TidyFS installed at \${BIN_DIR}/tidyfs"
           </div>
 
           {/* macOS Platform Section */}
-          <div className="card-normal p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-3">
+          <div className="card-normal p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-3.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-900/50">
+                <span className="px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase tracking-wider bg-purple-50 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-900/50">
                   macOS
                 </span>
-                <span className="font-extrabold text-sm text-slate-900 dark:text-white">
-                  Finder Double-Click Installer (.command / .sh)
+                <span className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                  Terminal Curl One-Liner & Finder Installer (.command)
                 </span>
               </div>
-              <span className="text-[11px] font-mono font-bold text-slate-500">Apple Silicon & Intel</span>
+              <span className="text-xs font-mono font-bold text-slate-500">Apple Silicon & Intel</span>
             </div>
 
             <p className="text-slate-600 dark:text-slate-300 font-semibold leading-relaxed">
-              Double-click <code className="font-mono font-bold text-slate-800 dark:text-slate-200">download-mac.command</code> directly in macOS Finder to download, mount, and copy <code className="font-mono font-bold text-slate-800 dark:text-slate-200">TidyFS.app</code> into <code className="font-mono font-bold text-slate-800 dark:text-slate-200">/Applications</code>.
+              Downloads the DMG, mounts it silently, installs <code className="font-mono font-bold text-slate-800 dark:text-slate-200">TidyFS.app</code> into <code className="font-mono font-bold text-slate-800 dark:text-slate-200">/Applications</code>, and removes quarantine flags.
             </p>
+
+            {/* Terminal One-Liner Box */}
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-mono font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                MACOS TERMINAL (CURL) COMMAND:
+              </span>
+              <div className="flex items-center justify-between gap-2 p-2.5 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-xs">
+                <code className="text-purple-700 dark:text-purple-300 truncate font-bold select-all">
+                  curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-mac.sh | bash
+                </code>
+                <button
+                  onClick={() => handleCopy('curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-mac.sh | bash', 'mac')}
+                  className="btn-normal flex items-center gap-1.5 px-3 py-1 rounded bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs cursor-pointer shrink-0 shadow-2xs"
+                >
+                  {copiedIndex === 'mac' ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copiedIndex === 'mac' ? 'Copied' : 'Copy Command'}
+                </button>
+              </div>
+            </div>
 
             <div className="flex items-center gap-2 flex-wrap pt-1">
               <button
                 onClick={() => handleDownloadFile('download-mac.command', MAC_COMMAND_SNIPPET)}
-                className="btn-normal flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs cursor-pointer shadow-2xs"
+                className="btn-normal flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-650 text-slate-800 dark:text-slate-200 font-extrabold text-xs border border-slate-300 dark:border-slate-600 cursor-pointer shadow-2xs"
               >
                 <Download className="h-3.5 w-3.5" />
                 Download Mac Script (.command)
-              </button>
-
-              <button
-                onClick={() => handleCopy('curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-mac.sh | bash', 'mac')}
-                className="btn-normal flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-650 text-slate-800 dark:text-slate-200 font-extrabold text-xs border border-slate-300 dark:border-slate-600 cursor-pointer shadow-2xs"
-              >
-                {copiedIndex === 'mac' ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Terminal className="h-3.5 w-3.5 text-slate-500" />}
-                {copiedIndex === 'mac' ? 'Terminal Command Copied' : 'Copy Mac Terminal Command'}
               </button>
             </div>
           </div>
 
           {/* Linux Platform Section */}
-          <div className="card-normal p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-3">
+          <div className="card-normal p-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-3.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900/50">
+                <span className="px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900/50">
                   Linux
                 </span>
-                <span className="font-extrabold text-sm text-slate-900 dark:text-white">
-                  Universal AppImage & Desktop Integrator (.sh)
+                <span className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                  Terminal Curl One-Liner & AppImage Integrator (.sh)
                 </span>
               </div>
-              <span className="text-[11px] font-mono font-bold text-slate-500">Universal .AppImage</span>
+              <span className="text-xs font-mono font-bold text-slate-500">Universal .AppImage</span>
             </div>
 
             <p className="text-slate-600 dark:text-slate-300 font-semibold leading-relaxed">
-              Automates downloading the Linux AppImage, granting executable permissions, and installing <code className="font-mono font-bold text-slate-800 dark:text-slate-200">tidyfs.desktop</code> into the system desktop launcher.
+              Fetches the universal Linux AppImage, grants executable permissions, and installs <code className="font-mono font-bold text-slate-800 dark:text-slate-200">tidyfs.desktop</code> into the user application menu.
             </p>
+
+            {/* Terminal One-Liner Box */}
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-mono font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                LINUX TERMINAL (CURL) COMMAND:
+              </span>
+              <div className="flex items-center justify-between gap-2 p-2.5 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-xs">
+                <code className="text-amber-700 dark:text-amber-300 truncate font-bold select-all">
+                  curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-linux.sh | bash
+                </code>
+                <button
+                  onClick={() => handleCopy('curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-linux.sh | bash', 'linux')}
+                  className="btn-normal flex items-center gap-1.5 px-3 py-1 rounded bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs cursor-pointer shrink-0 shadow-2xs"
+                >
+                  {copiedIndex === 'linux' ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copiedIndex === 'linux' ? 'Copied' : 'Copy Command'}
+                </button>
+              </div>
+            </div>
 
             <div className="flex items-center gap-2 flex-wrap pt-1">
               <button
                 onClick={() => handleDownloadFile('download-linux.sh', LINUX_SH_SNIPPET)}
-                className="btn-normal flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs cursor-pointer shadow-2xs"
+                className="btn-normal flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-650 text-slate-800 dark:text-slate-200 font-extrabold text-xs border border-slate-300 dark:border-slate-600 cursor-pointer shadow-2xs"
               >
                 <Download className="h-3.5 w-3.5" />
                 Download Linux Script (.sh)
-              </button>
-
-              <button
-                onClick={() => handleCopy('curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-linux.sh | bash', 'linux')}
-                className="btn-normal flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-650 text-slate-800 dark:text-slate-200 font-extrabold text-xs border border-slate-300 dark:border-slate-600 cursor-pointer shadow-2xs"
-              >
-                {copiedIndex === 'linux' ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Terminal className="h-3.5 w-3.5 text-slate-500" />}
-                {copiedIndex === 'linux' ? 'Terminal Command Copied' : 'Copy Linux Terminal Command'}
               </button>
             </div>
           </div>

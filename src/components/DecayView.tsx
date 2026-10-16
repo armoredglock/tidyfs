@@ -95,7 +95,7 @@ export const DecayView: React.FC<DecayViewProps> = ({ files, decayDays, onReveal
           No temporary files matching this filter.
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[58vh] overflow-y-auto pr-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto pr-1">
           {filtered.map(file => {
             const isExpired = file.decayState === 'expired';
             const isExpiring = file.decayState === 'expiring';
@@ -103,15 +103,15 @@ export const DecayView: React.FC<DecayViewProps> = ({ files, decayDays, onReveal
             return (
               <div
                 key={file.path}
-                className="card-normal p-4 flex flex-col justify-between space-y-3 transition-colors"
+                className="card-normal p-4 sm:p-4.5 flex flex-col justify-between space-y-3.5 transition-colors"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2.5">
                       <div className="h-7 w-7 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50 flex items-center justify-center shrink-0">
                         <Package className="h-4 w-4" />
                       </div>
-                      <span className="font-mono font-bold text-xs text-slate-900 dark:text-white truncate max-w-[190px]" title={file.name}>
+                      <span className="font-mono font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white truncate max-w-[210px]" title={file.name}>
                         {file.name}
                       </span>
                     </div>
@@ -121,11 +121,11 @@ export const DecayView: React.FC<DecayViewProps> = ({ files, decayDays, onReveal
                       className="text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors p-1"
                       title="Reveal in Explorer"
                     >
-                      <ExternalLink className="h-3.5 w-3.5" />
+                      <ExternalLink className="h-4 w-4" />
                     </button>
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-mono font-bold">
+                  <div className="mt-3.5 flex items-center justify-between text-xs sm:text-[13px] text-slate-600 dark:text-slate-400 font-mono font-bold">
                     <span>{formatBytes(file.size)}</span>
                     <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                       Added {new Date(file.createdAt).toLocaleDateString()}
@@ -133,20 +133,20 @@ export const DecayView: React.FC<DecayViewProps> = ({ files, decayDays, onReveal
                   </div>
                 </div>
 
-                <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                  <span className="text-[11px] font-extrabold text-slate-500 dark:text-slate-400">Lifecycle State</span>
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                  <span className="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase">Lifecycle</span>
                   <div>
                     {isExpired ? (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60">
-                        Expired (Ready to recycle)
+                      <span className="px-2.5 py-0.5 rounded text-[11px] font-extrabold bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60">
+                        EXPIRED
                       </span>
                     ) : isExpiring ? (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900/60">
-                        {file.daysUntilDecay} days left
+                      <span className="px-2.5 py-0.5 rounded text-[11px] font-extrabold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900/60">
+                        EXPIRING SOON
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/60">
-                        {file.daysUntilDecay} days left
+                      <span className="px-2.5 py-0.5 rounded text-[11px] font-extrabold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/60">
+                        ACTIVE
                       </span>
                     )}
                   </div>

@@ -98,16 +98,16 @@ export const HeavyFilesView: React.FC<HeavyFilesViewProps> = ({
       </div>
 
       {/* Heavy Files Table */}
-      <div className="card-normal overflow-hidden transition-colors flex-1 min-h-[380px] max-h-[58vh] flex flex-col">
+      <div className="card-normal overflow-hidden transition-colors flex-1 min-h-[380px] max-h-[60vh] flex flex-col">
         <div className="overflow-x-auto overflow-y-auto flex-1">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-slate-800/90 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px] font-extrabold">
+          <table className="w-full text-left text-xs sm:text-[13px]">
+            <thead className="bg-slate-50 dark:bg-slate-800/90 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase tracking-wider text-xs font-black">
               <tr>
-                <th className="p-3">File Name</th>
-                <th className="p-3">Category</th>
-                <th className="p-3">Size</th>
-                <th className="p-3">Created Date</th>
-                <th className="p-3 w-12 text-center"></th>
+                <th className="p-3.5">File Name</th>
+                <th className="p-3.5">Category</th>
+                <th className="p-3.5">Size</th>
+                <th className="p-3.5">Created Date</th>
+                <th className="p-3.5 w-14 text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-semibold text-slate-800 dark:text-slate-200">
@@ -115,32 +115,32 @@ export const HeavyFilesView: React.FC<HeavyFilesViewProps> = ({
                 .sort((a, b) => b.size - a.size)
                 .map(file => (
                   <tr key={file.path} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td className="p-3 text-slate-900 dark:text-white font-mono font-bold flex items-center gap-2">
+                    <td className="p-3.5 text-slate-900 dark:text-white font-mono font-bold flex items-center gap-2.5">
                       <div className="h-6 w-6 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50 flex items-center justify-center shrink-0">
-                        <HardDrive className="h-3.5 w-3.5" />
+                        <HardDrive className="h-4 w-4" />
                       </div>
-                      <span className="truncate max-w-sm" title={file.name}>
+                      <span className="truncate max-w-sm sm:max-w-md" title={file.name}>
                         {file.name}
                       </span>
                     </td>
-                    <td className="p-3">
-                      <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200">
+                    <td className="p-3.5">
+                      <span className="px-2.5 py-0.5 rounded text-[11px] font-bold bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200">
                         {file.category}
                       </span>
                     </td>
-                    <td className="p-3 text-blue-700 dark:text-blue-400 font-mono font-extrabold text-xs">
+                    <td className="p-3.5 text-blue-700 dark:text-blue-400 font-mono font-extrabold text-xs sm:text-[13px]">
                       {formatBytes(file.size)}
                     </td>
-                    <td className="p-3 text-slate-600 dark:text-slate-400 font-medium">
+                    <td className="p-3.5 text-slate-600 dark:text-slate-400 font-medium text-xs sm:text-[13px]">
                       {new Date(file.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="p-3 text-center">
+                    <td className="p-3.5 text-center">
                       <button
                         onClick={() => onRevealFile(file.path)}
-                        className="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors p-1"
+                        className="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors p-1.5 cursor-pointer"
                         title="Reveal in File Explorer"
                       >
-                        <ExternalLink className="h-3.5 w-3.5" />
+                        <ExternalLink className="h-4 w-4" />
                       </button>
                     </td>
                   </tr>

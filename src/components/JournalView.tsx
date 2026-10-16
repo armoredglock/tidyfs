@@ -47,15 +47,15 @@ export const JournalView: React.FC<JournalViewProps> = ({ journal, onRevert, isR
           return (
             <div
               key={entry.id}
-              className={`card-normal p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors ${
+              className={`card-normal p-4 sm:p-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors ${
                 isReverted ? 'opacity-50 bg-slate-50 dark:bg-slate-900/40' : 'bg-white dark:bg-slate-900'
               }`}
             >
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-slate-900 dark:text-white">Batch #{entry.id}</span>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xs sm:text-[13px] font-mono font-bold text-slate-900 dark:text-white">Batch #{entry.id}</span>
                   <span
-                    className={`px-2 py-0.5 rounded text-[10px] font-extrabold tracking-wide uppercase ${
+                    className={`px-2.5 py-0.5 rounded text-[11px] font-extrabold tracking-wide uppercase ${
                       isReverted
                         ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
                         : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
@@ -64,14 +64,14 @@ export const JournalView: React.FC<JournalViewProps> = ({ journal, onRevert, isR
                     {entry.status}
                   </span>
                 </div>
-                <div className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                <div className="text-xs sm:text-[13px] font-semibold text-slate-600 dark:text-slate-400">
                   {entry.actions.length} files organized · <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{dateStr}</span>
                 </div>
               </div>
 
               <div>
                 {isReverted ? (
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-extrabold flex items-center gap-1.5">
+                  <span className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 font-extrabold flex items-center gap-1.5">
                     <Check className="h-4 w-4" />
                     Reverted
                   </span>
@@ -79,9 +79,9 @@ export const JournalView: React.FC<JournalViewProps> = ({ journal, onRevert, isR
                   <button
                     onClick={() => onRevert(entry.id)}
                     disabled={isReverting}
-                    className="btn-normal flex items-center gap-1.5 px-3 py-1.5 rounded bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-800 text-xs font-extrabold cursor-pointer disabled:opacity-50"
+                    className="btn-normal flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-800 text-xs sm:text-[13px] font-extrabold cursor-pointer disabled:opacity-50"
                   >
-                    <RotateCcw className="h-3.5 w-3.5" />
+                    <RotateCcw className="h-4 w-4" />
                     Revert Operation
                   </button>
                 )}
