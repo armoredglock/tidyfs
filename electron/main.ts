@@ -126,6 +126,12 @@ function setupIPCHandlers(): void {
     return app.getPath('desktop');
   });
 
+  ipcMain.handle('app:getPlatform', () => {
+    if (process.platform === 'darwin') return 'mac';
+    if (process.platform === 'linux') return 'linux';
+    return 'windows';
+  });
+
   ipcMain.handle('app:openInExplorer', (_event, targetPath: string) => {
     if (fs.existsSync(targetPath)) {
       shell.showItemInFolder(targetPath);

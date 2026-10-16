@@ -7,3 +7,5 @@ declare global {
 }
 
 export * from '../engine/types.js';
+
+export type OSTheme = 'windows' | 'mac' | 'linux';

@@ -13,6 +13,7 @@ export interface TidyFSAPI {
   openInExplorer: (targetPath: string) => Promise<void>;
   getSettings: () => Promise<TidySettings>;
   saveSettings: (settings: TidySettings) => Promise<void>;
+  getPlatform: () => Promise<'windows' | 'mac' | 'linux'>;
 }
 
 const api: TidyFSAPI = {
@@ -27,6 +28,7 @@ const api: TidyFSAPI = {
   openInExplorer: (targetPath) => ipcRenderer.invoke('app:openInExplorer', targetPath),
   getSettings: () => ipcRenderer.invoke('settings:get'),
   saveSettings: (settings) => ipcRenderer.invoke('settings:save', settings),
+  getPlatform: () => ipcRenderer.invoke('app:getPlatform'),
 };
 
 contextBridge.exposeInMainWorld('tidyFS', api);

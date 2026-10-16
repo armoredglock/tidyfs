@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   HardDrive
 } from 'lucide-react';
-import { ScannedFile, TidyPlan, TidySettings, JournalEntry, DEFAULT_SETTINGS, TidyAction, Category, OrganizationStrategy } from './types.js';
+import { ScannedFile, TidyPlan, TidySettings, JournalEntry, DEFAULT_SETTINGS, TidyAction, Category, OrganizationStrategy, OSTheme } from './types.js';
 import { Header } from './components/Header.js';
 import { StatsCards } from './components/StatsCards.js';
 import { StorageBar } from './components/StorageBar.js';
@@ -40,6 +40,9 @@ export const App: React.FC = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     return (localStorage.getItem('tidyfs_theme') as 'light' | 'dark') || 'light';
   });
+  const [osTheme, setOsTheme] = useState<OSTheme>(() => {
+    return (localStorage.getItem('tidyfs_os_theme') as OSTheme) || 'windows';
+  });
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   useEffect(() => {
@@ -50,6 +53,37 @@ export const App: React.FC = () => {
     }
     localStorage.setItem('tidyfs_theme', theme);
   }, [theme]);
+
+  // Sync OS-specific root CSS classes
+  useEffect(() => {
+    document.documentElement.classList.remove('os-windows', 'os-mac', 'os-linux');
+    document.documentElement.classList.add(`os-${osTheme}`);
+    localStorage.setItem('tidyfs_os_theme', osTheme);
+  }, [osTheme]);
+
+  // Auto-detect native host OS on first launch if not manually overridden
+  useEffect(() => {
+    async function detectPlatform() {
+      const saved = localStorage.getItem('tidyfs_os_theme') as OSTheme;
+      if (!saved) {
+        try {
+          if (window.tidyFS && window.tidyFS.getPlatform) {
+            const detected = await window.tidyFS.getPlatform();
+            setOsTheme(detected);
+          } else if (navigator.userAgent.includes('Mac')) {
+            setOsTheme('mac');
+          } else if (navigator.userAgent.includes('Linux')) {
+            setOsTheme('linux');
+          } else {
+            setOsTheme('windows');
+          }
+        } catch {
+          // fallback to windows
+        }
+      }
+    }
+    detectPlatform();
+  }, []);
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
@@ -347,6 +381,8 @@ export const App: React.FC = () => {
         isScanning={isScanning}
         theme={theme}
         onToggleTheme={toggleTheme}
+        osTheme={osTheme}
+        onSelectOSTheme={setOsTheme}
       />
 
       {/* Main Full-Width Content Container */}
@@ -367,20 +403,32 @@ export const App: React.FC = () => {
           onExportReport={handleExportReport}
         />
 
-        {/* Industrial Tab Switcher Bar */}
-        <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800/80 pb-2.5 overflow-x-auto font-mono">
+        {/* Industrial / Platform-Adaptive Tab Switcher Bar */}
+        <div className={`flex items-center gap-2 border-b ${
+          osTheme === 'linux'
+            ? 'border-emerald-600/40 bg-black/20 p-1 rounded-none font-mono'
+            : osTheme === 'mac'
+            ? 'border-black/5 dark:border-white/10 pb-3'
+            : 'border-slate-200 dark:border-slate-800/80 pb-2.5 font-mono'
+        } overflow-x-auto`}>
           <button
             onClick={() => setActiveTab('plan')}
-            className={`btn-brute px-3.5 py-1.5 rounded-md text-xs font-black flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
+            className={`btn-brute px-3.5 py-1.5 ${
+              osTheme === 'mac' ? 'rounded-full' : osTheme === 'linux' ? 'rounded-none border border-emerald-500' : 'rounded-md'
+            } text-xs font-black flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
               activeTab === 'plan'
-                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
+                ? osTheme === 'linux'
+                  ? 'bg-emerald-500 text-black border-emerald-400 font-mono shadow-xs'
+                  : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-850/70 border border-slate-300 dark:border-slate-700/70'
             }`}
           >
             <FolderSync className="h-3.5 w-3.5 text-emerald-500" />
-            <span>01 // ORGANIZE</span>
+            <span>{osTheme === 'linux' ? '[01:ORGANIZE]' : '01 // ORGANIZE'}</span>
             {plan && plan.actions.length > 0 && (
-              <span className="px-1.5 py-0.2 bg-emerald-500 text-slate-950 rounded text-[10px] font-black">
+              <span className={`px-1.5 py-0.2 ${
+                osTheme === 'mac' ? 'rounded-full' : osTheme === 'linux' ? 'rounded-none' : 'rounded'
+              } bg-emerald-500 text-slate-950 text-[10px] font-black`}>
                 {plan.actions.length}
               </span>
             )}
@@ -388,16 +436,22 @@ export const App: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('decay')}
-            className={`btn-brute px-3.5 py-1.5 rounded-md text-xs font-black flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
+            className={`btn-brute px-3.5 py-1.5 ${
+              osTheme === 'mac' ? 'rounded-full' : osTheme === 'linux' ? 'rounded-none border border-amber-500' : 'rounded-md'
+            } text-xs font-black flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
               activeTab === 'decay'
-                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
+                ? osTheme === 'linux'
+                  ? 'bg-amber-500 text-black border-amber-400 font-mono shadow-xs'
+                  : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-850/70 border border-slate-300 dark:border-slate-700/70'
             }`}
           >
             <Clock className="h-3.5 w-3.5 text-amber-500" />
-            <span>02 // DECAY</span>
+            <span>{osTheme === 'linux' ? '[02:DECAY]' : '02 // DECAY'}</span>
             {files.filter(f => f.isInstallerOrArchive).length > 0 && (
-              <span className="px-1.5 py-0.2 bg-amber-500 text-slate-950 rounded text-[10px] font-black">
+              <span className={`px-1.5 py-0.2 ${
+                osTheme === 'mac' ? 'rounded-full' : osTheme === 'linux' ? 'rounded-none' : 'rounded'
+              } bg-amber-500 text-slate-950 text-[10px] font-black`}>
                 {files.filter(f => f.isInstallerOrArchive).length}
               </span>
             )}
@@ -405,16 +459,22 @@ export const App: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('duplicates')}
-            className={`btn-brute px-3.5 py-1.5 rounded-md text-xs font-black flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
+            className={`btn-brute px-3.5 py-1.5 ${
+              osTheme === 'mac' ? 'rounded-full' : osTheme === 'linux' ? 'rounded-none border border-rose-500' : 'rounded-md'
+            } text-xs font-black flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
               activeTab === 'duplicates'
-                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
+                ? osTheme === 'linux'
+                  ? 'bg-rose-500 text-white border-rose-400 font-mono shadow-xs'
+                  : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-850/70 border border-slate-300 dark:border-slate-700/70'
             }`}
           >
             <Copy className="h-3.5 w-3.5 text-rose-500" />
-            <span>03 // DEDUP</span>
+            <span>{osTheme === 'linux' ? '[03:DEDUP]' : '03 // DEDUP'}</span>
             {files.filter(f => f.duplicateOf).length > 0 && (
-              <span className="px-1.5 py-0.2 bg-rose-500 text-slate-950 rounded text-[10px] font-black">
+              <span className={`px-1.5 py-0.2 ${
+                osTheme === 'mac' ? 'rounded-full' : osTheme === 'linux' ? 'rounded-none' : 'rounded'
+              } bg-rose-500 text-slate-950 text-[10px] font-black`}>
                 {files.filter(f => f.duplicateOf).length}
               </span>
             )}
@@ -422,16 +482,22 @@ export const App: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('heavy')}
-            className={`btn-brute px-3.5 py-1.5 rounded-md text-xs font-black flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
+            className={`btn-brute px-3.5 py-1.5 ${
+              osTheme === 'mac' ? 'rounded-full' : osTheme === 'linux' ? 'rounded-none border border-cyan-500' : 'rounded-md'
+            } text-xs font-black flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
               activeTab === 'heavy'
-                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
+                ? osTheme === 'linux'
+                  ? 'bg-cyan-500 text-black border-cyan-400 font-mono shadow-xs'
+                  : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-850/70 border border-slate-300 dark:border-slate-700/70'
             }`}
           >
             <HardDrive className="h-3.5 w-3.5 text-blue-500" />
-            <span>04 // HEAVY_FILES</span>
+            <span>{osTheme === 'linux' ? '[04:HEAVY]' : '04 // HEAVY_FILES'}</span>
             {plan && (plan.summary.heavyCount || 0) > 0 && (
-              <span className="px-1.5 py-0.2 bg-blue-500 text-slate-950 rounded text-[10px] font-black">
+              <span className={`px-1.5 py-0.2 ${
+                osTheme === 'mac' ? 'rounded-full' : osTheme === 'linux' ? 'rounded-none' : 'rounded'
+              } bg-blue-500 text-slate-950 text-[10px] font-black`}>
                 {plan.summary.heavyCount}
               </span>
             )}
@@ -439,16 +505,22 @@ export const App: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('journal')}
-            className={`btn-brute px-3.5 py-1.5 rounded-md text-xs font-black flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
+            className={`btn-brute px-3.5 py-1.5 ${
+              osTheme === 'mac' ? 'rounded-full' : osTheme === 'linux' ? 'rounded-none border border-slate-500' : 'rounded-md'
+            } text-xs font-black flex items-center gap-1.5 cursor-pointer shrink-0 transition-all ${
               activeTab === 'journal'
-                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
+                ? osTheme === 'linux'
+                  ? 'bg-slate-700 text-emerald-300 border-slate-500 font-mono shadow-xs'
+                  : 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-900 dark:border-white shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-850/70 border border-slate-300 dark:border-slate-700/70'
             }`}
           >
             <History className="h-3.5 w-3.5 text-slate-400" />
-            <span>05 // JOURNAL</span>
+            <span>{osTheme === 'linux' ? '[05:JOURNAL]' : '05 // JOURNAL'}</span>
             {journal.length > 0 && (
-              <span className="px-1.5 py-0.2 bg-slate-700 text-white rounded text-[10px] font-black">
+              <span className={`px-1.5 py-0.2 ${
+                osTheme === 'mac' ? 'rounded-full' : osTheme === 'linux' ? 'rounded-none' : 'rounded'
+              } bg-slate-700 text-white text-[10px] font-black`}>
                 {journal.length}
               </span>
             )}
@@ -508,11 +580,18 @@ export const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Industrial Telemetry Bottom Status Bar */}
-      <footer className="w-full bg-slate-100 dark:bg-[#070b14] border-t border-slate-300 dark:border-slate-800 px-6 py-1.5 flex flex-col sm:flex-row items-center justify-between text-[10px] font-mono select-none text-slate-600 dark:text-slate-400">
+      {/* Industrial / Platform Status Bar */}
+      <footer className={`w-full ${
+        osTheme === 'mac'
+          ? 'bg-white/80 dark:bg-[#0c101c]/80 backdrop-blur-md border-t border-black/5 dark:border-white/10'
+          : osTheme === 'linux'
+          ? 'bg-black text-emerald-400 border-t-2 border-emerald-600 font-mono'
+          : 'bg-slate-100 dark:bg-[#0b0f19] border-t border-slate-300 dark:border-slate-800'
+      } px-6 py-1.5 flex flex-col sm:flex-row items-center justify-between text-[10px] font-mono select-none text-slate-600 dark:text-slate-400`}>
         <div className="flex items-center gap-3">
           <span className="font-extrabold text-slate-800 dark:text-slate-200">
-            PATH // <span className="text-slate-600 dark:text-slate-400 font-bold">{currentFolder || 'UNDEFINED'}</span>
+            {osTheme === 'linux' ? 'CWD // ' : 'PATH // '}
+            <span className="text-slate-600 dark:text-slate-400 font-bold">{currentFolder || 'UNDEFINED'}</span>
           </span>
           <span className="hidden md:inline">|</span>
           <span className="hidden md:inline">
@@ -522,11 +601,17 @@ export const App: React.FC = () => {
 
         <div className="flex items-center gap-3 mt-1 sm:mt-0 font-bold">
           <span>
+            MODE: <strong className={osTheme === 'linux' ? 'text-cyan-400' : osTheme === 'mac' ? 'text-teal-400' : 'text-blue-500'}>
+              {osTheme === 'mac' ? 'MACOS LIQUID GLASS' : osTheme === 'linux' ? 'LINUX PUNCHY TECH' : 'WINDOWS FLUENT BOLD'}
+            </strong>
+          </span>
+          <span>|</span>
+          <span>
             JOURNAL: <strong className="text-slate-900 dark:text-white">{journal.length} COMMITS</strong>
           </span>
           <span>|</span>
           <span className="text-emerald-700 dark:text-emerald-400 font-black">
-            STATUS: READY
+            STATUS: {osTheme === 'linux' ? '[DAEMON_OK]' : 'READY'}
           </span>
         </div>
       </footer>
