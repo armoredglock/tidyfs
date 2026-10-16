@@ -4,9 +4,33 @@ A high-performance desktop application for Windows, macOS, and Linux that system
 
 ---
 
+## Terminal Quick Install (One-Line Prompts)
+
+Download and launch TidyFS instantly from your command line without manually downloading packages from a browser:
+
+### Windows (PowerShell)
+Run in PowerShell (as standard user or administrator):
+```powershell
+irm https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-windows.ps1 | iex
+```
+
+### macOS (Terminal)
+Run in Terminal (supports both Apple Silicon M1/M2/M3/M4 and Intel x64):
+```bash
+curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-mac.sh | bash
+```
+
+### Linux (Terminal)
+Run in Terminal (supports Ubuntu, Debian, Fedora, Arch, etc.):
+```bash
+curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-linux.sh | bash
+```
+
+---
+
 ## Direct Installers (For End Users)
 
-End users **do not need Node.js, npm, or terminal commands**. Standalone production binaries bundle all necessary runtimes into a single installable package.
+End users **do not need Node.js, npm, or build tools**. Standalone production binaries bundle all necessary runtimes into a single installable package.
 
 Download the installer for your operating system from the [Latest GitHub Release](https://github.com/armoredglock/tidyfs/releases/latest):
 

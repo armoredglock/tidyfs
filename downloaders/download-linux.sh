@@ -31,9 +31,17 @@ APPIMAGE_NAME="TidyFS-${VERSION}-${ARCH_TAG}.AppImage"
 DEB_NAME="tidyfs_${VERSION}_amd64.deb"
 DOWNLOAD_URL="https://github.com/armoredglock/tidyfs/releases/download/v${VERSION}/${APPIMAGE_NAME}"
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOCAL_APPIMAGE="${SCRIPT_DIR}/../release/${APPIMAGE_NAME}"
-LOCAL_DEB="${SCRIPT_DIR}/../release/${DEB_NAME}"
+SCRIPT_DIR=""
+if [ -n "${BASH_SOURCE[0]:-}" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || echo "")"
+fi
+
+LOCAL_APPIMAGE=""
+LOCAL_DEB=""
+if [ -n "$SCRIPT_DIR" ]; then
+    LOCAL_APPIMAGE="${SCRIPT_DIR}/../release/${APPIMAGE_NAME}"
+    LOCAL_DEB="${SCRIPT_DIR}/../release/${DEB_NAME}"
+fi
 
 mkdir -p "$INSTALL_DIR"
 mkdir -p "$DESKTOP_DIR"
@@ -42,17 +50,19 @@ mkdir -p "$ICON_DIR"
 TARGET_BIN="${INSTALL_DIR}/tidyfs"
 
 # 1. Check local release files
-if [ -f "$LOCAL_APPIMAGE" ]; then
+if [ -n "$LOCAL_APPIMAGE" ] && [ -f "$LOCAL_APPIMAGE" ]; then
     echo "[INFO] Found local AppImage in release directory: $LOCAL_APPIMAGE"
     cp "$LOCAL_APPIMAGE" "$TARGET_BIN"
-elif [ -f "$LOCAL_DEB" ] && command -v dpkg >/dev/null 2>&1; then
+elif [ -n "$LOCAL_DEB" ] && [ -f "$LOCAL_DEB" ] && command -v dpkg >/dev/null 2>&1; then
     echo "[INFO] Found local Debian package: $LOCAL_DEB"
-    read -p "Install system-wide via dpkg? (sudo required) (Y/n): " -n 1 -r || true
-    echo ""
-    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
-        sudo dpkg -i "$LOCAL_DEB" || sudo apt-get install -f -y
-        echo "[SUCCESS] Installed TidyFS via package manager."
-        exit 0
+    if [ -t 0 ]; then
+        read -p "Install system-wide via dpkg? (sudo required) (Y/n): " -n 1 -r || true
+        echo ""
+        if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+            sudo dpkg -i "$LOCAL_DEB" || sudo apt-get install -f -y
+            echo "[SUCCESS] Installed TidyFS via package manager."
+            exit 0
+        fi
     fi
     cp "$LOCAL_DEB" /tmp/
 fi
@@ -105,9 +115,14 @@ echo "[INFO] Desktop Launcher: Available in your Application menu"
 echo "========================================================"
 echo ""
 
-read -p "Launch TidyFS now? (Y/n): " -n 1 -r || true
-echo ""
-if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+if [ -t 0 ]; then
+    read -p "Launch TidyFS now? (Y/n): " -n 1 -r || true
+    echo ""
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        echo "[STATUS] Launching TidyFS..."
+        nohup "$TARGET_BIN" >/dev/null 2>&1 &
+    fi
+else
     echo "[STATUS] Launching TidyFS..."
     nohup "$TARGET_BIN" >/dev/null 2>&1 &
 fi

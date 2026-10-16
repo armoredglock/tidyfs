@@ -4,6 +4,27 @@ This directory provides dedicated downloader and installation scripts for Window
 
 ---
 
+## One-Line Terminal Prompts
+
+Run these directly in your system terminal for immediate automated installation:
+
+### Windows (PowerShell)
+```powershell
+irm https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-windows.ps1 | iex
+```
+
+### macOS (Terminal)
+```bash
+curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-mac.sh | bash
+```
+
+### Linux (Terminal)
+```bash
+curl -fsSL https://raw.githubusercontent.com/armoredglock/tidyfs/main/downloaders/download-linux.sh | bash
+```
+
+---
+
 ## 1. Windows Downloader
 
 ### Option A: Double-Click Batch File

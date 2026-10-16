@@ -30,19 +30,27 @@ ZIP_NAME="TidyFS-${VERSION}-mac.zip"
 DOWNLOAD_URL="https://github.com/armoredglock/tidyfs/releases/download/v${VERSION}/${DMG_NAME}"
 FALLBACK_ZIP_URL="https://github.com/armoredglock/tidyfs/releases/download/v${VERSION}/${ZIP_NAME}"
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOCAL_DMG="${SCRIPT_DIR}/../release/${DMG_NAME}"
-LOCAL_ZIP="${SCRIPT_DIR}/../release/${ZIP_NAME}"
+SCRIPT_DIR=""
+if [ -n "${BASH_SOURCE[0]:-}" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || echo "")"
+fi
+
+LOCAL_DMG=""
+LOCAL_ZIP=""
+if [ -n "$SCRIPT_DIR" ]; then
+    LOCAL_DMG="${SCRIPT_DIR}/../release/${DMG_NAME}"
+    LOCAL_ZIP="${SCRIPT_DIR}/../release/${ZIP_NAME}"
+fi
 
 mkdir -p "$TARGET_DIR"
 
 INSTALL_SOURCE=""
 
 # 1. Check local release files first
-if [ -f "$LOCAL_DMG" ]; then
+if [ -n "$LOCAL_DMG" ] && [ -f "$LOCAL_DMG" ]; then
     echo "[INFO] Found local DMG image in release directory: $LOCAL_DMG"
     INSTALL_SOURCE="$LOCAL_DMG"
-elif [ -f "$LOCAL_ZIP" ]; then
+elif [ -n "$LOCAL_ZIP" ] && [ -f "$LOCAL_ZIP" ]; then
     echo "[INFO] Found local Zip archive in release directory: $LOCAL_ZIP"
     INSTALL_SOURCE="$LOCAL_ZIP"
 fi
@@ -104,9 +112,14 @@ if [ -d "/Applications/TidyFS.app" ]; then
     echo "========================================================"
     echo ""
 
-    read -p "Would you like to launch TidyFS now? (Y/n): " -n 1 -r || true
-    echo ""
-    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+    if [ -t 0 ]; then
+        read -p "Would you like to launch TidyFS now? (Y/n): " -n 1 -r || true
+        echo ""
+        if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+            echo "[STATUS] Launching TidyFS..."
+            open /Applications/TidyFS.app
+        fi
+    else
         echo "[STATUS] Launching TidyFS..."
         open /Applications/TidyFS.app
     fi

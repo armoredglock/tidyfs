@@ -31,10 +31,10 @@ Write-Host ""
 
 $fileName = if ($Portable) { "TidyFS $Version.exe" } else { "TidyFS Setup $Version.exe" }
 $downloadUrl = "https://github.com/armoredglock/tidyfs/releases/download/v$Version/$([Uri]::EscapeDataString($fileName))"
-$localReleasePath = Join-Path $PSScriptRoot "..\release\$fileName"
+$localReleasePath = if (![string]::IsNullOrEmpty($PSScriptRoot)) { Join-Path $PSScriptRoot "..\release\$fileName" } else { $null }
 
 # Check local release first
-if (Test-Path $localReleasePath) {
+if ($localReleasePath -and (Test-Path $localReleasePath)) {
     Write-Host "[INFO] Detected local release executable at: $localReleasePath" -ForegroundColor Green
     $targetFile = $localReleasePath
 } else {
@@ -55,8 +55,8 @@ if (Test-Path $localReleasePath) {
     } catch {
         Write-Host "[WARNING] Remote download failed: $_" -ForegroundColor Yellow
         Write-Host "[INFO] Checking current script directory..." -ForegroundColor Gray
-        $sameDirFile = Join-Path $PSScriptRoot $fileName
-        if (Test-Path $sameDirFile) {
+        $sameDirFile = if (![string]::IsNullOrEmpty($PSScriptRoot)) { Join-Path $PSScriptRoot $fileName } else { $null }
+        if ($sameDirFile -and (Test-Path $sameDirFile)) {
             $targetFile = $sameDirFile
             Write-Host "[INFO] Using binary found in current directory." -ForegroundColor Green
         } else {
